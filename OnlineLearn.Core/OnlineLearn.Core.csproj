@@ -13,4 +13,12 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Security\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnlineLearn.DataLayer\OnlineLearn.DataLayer.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OnlineLearn.Core.Services;
+using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using System;
 using System.Collections.Generic;
@@ -25,10 +27,17 @@ namespace OnlineLearn.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            #region Context
             services.AddDbContext<OnlineLearnContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("OnlineLearnConnection"));
             });
+            #endregion
+
+            #region IoC
+            services.AddTransient<IUserService, UserService>();
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
