@@ -1,4 +1,5 @@
-﻿using OnlineLearn.DataLayer.Entities.User;
+﻿using OnlineLearn.Core.DTOs;
+using OnlineLearn.DataLayer.Entities.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         bool IsExistUserName(string username);
         bool IsExistEmail(string email);
         int AddUser(User user);
+        User LoginUser(LoginVM login);
+        bool ActiveAccount(string activeCode);
     }
 }

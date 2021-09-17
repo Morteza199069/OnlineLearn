@@ -1,4 +1,8 @@
-﻿using OnlineLearn.Core.Services.Interfaces;
+﻿using OnlineLearn.Core.Convertors;
+using OnlineLearn.Core.DTOs;
+using OnlineLearn.Core.Genetrator;
+using OnlineLearn.Core.Security;
+using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.User;
 using System;
@@ -18,6 +22,18 @@ namespace OnlineLearn.Core.Services
             _context = context;
         }
 
+        public bool ActiveAccount(string activeCode)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
+            if (user == null || user.IsActive)
+                return false;
+
+            user.IsActive = true;
+            user.ActiveCode = NameGenerator.GenerateUniqueCode();
+            _context.SaveChanges();
+            return true;
+        }
+
         public int AddUser(User user)
         {
             _context.Users.Add(user);
@@ -33,6 +49,13 @@ namespace OnlineLearn.Core.Services
         public bool IsExistUserName(string username)
         {
             return _context.Users.Any(u => u.UserName == username);
+        }
+
+        public User LoginUser(LoginVM login)
+        {
+            string hashPassword = PasswordHelper.EncodePasswordMd5(login.Password);
+            string email = FixedText.FixEmail(login.Email);
+            return _context.Users.SingleOrDefault(u => u.Email == email && u.Password == hashPassword);
         }
     }
 }
