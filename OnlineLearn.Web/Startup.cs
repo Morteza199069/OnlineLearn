@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,20 @@ namespace OnlineLearn.Web
         {
             services.AddMvc();
 
+            #region Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(optins =>
+            {
+                optins.LoginPath = "/Login";
+                optins.LogoutPath = "/Logout";
+                optins.ExpireTimeSpan = TimeSpan.FromMinutes(43200);
+            });
+            #endregion
+
             #region Context
             services.AddDbContext<OnlineLearnContext>(options =>
             {
@@ -38,6 +53,7 @@ namespace OnlineLearn.Web
             #region IoC
             services.AddTransient<IUserService, UserService>();
             #endregion
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +66,7 @@ namespace OnlineLearn.Web
 
             app.UseRouting();
             app.UseStaticFiles();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

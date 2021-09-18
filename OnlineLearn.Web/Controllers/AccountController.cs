@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.DTOs;
 using OnlineLearn.Core.Genetrator;
@@ -8,6 +10,7 @@ using OnlineLearn.DataLayer.Entities.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace OnlineLearn.Web.Controllers
@@ -86,7 +89,19 @@ namespace OnlineLearn.Web.Controllers
             {
                 if (user.IsActive)
                 {
-                    //Login
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,user.UserId.ToString()),
+                        new Claim(ClaimTypes.Name,user.UserName)
+                    };
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+                    var properties = new AuthenticationProperties
+                    {
+                        IsPersistent = login.RememberMe
+                    };
+                    HttpContext.SignInAsync(principal, properties);
+
                     ViewBag.IsSuccess = true;
                     return View();
                 }
@@ -105,6 +120,15 @@ namespace OnlineLearn.Web.Controllers
         {
             ViewBag.IsActive = _userService.ActiveAccount(id);
             return View();
+        }
+        #endregion
+
+        #region Logout
+        [Route("Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Redirect("/Login");
         }
         #endregion
     }
