@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.Services;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
@@ -52,6 +53,7 @@ namespace OnlineLearn.Web
 
             #region IoC
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IViewRenderService, RenderViewToString>();
             #endregion
 
         }

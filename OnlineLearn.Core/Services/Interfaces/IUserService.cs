@@ -14,6 +14,9 @@ namespace OnlineLearn.Core.Services.Interfaces
         bool IsExistEmail(string email);
         int AddUser(User user);
         User LoginUser(LoginVM login);
+        User GetUserByEmail(string email);
+        User GetUserByActiveCode(string activeCode);
+        void UpdateUser(User user);
         bool ActiveAccount(string activeCode);
     }
 }

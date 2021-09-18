@@ -5,6 +5,7 @@ using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.DTOs;
 using OnlineLearn.Core.Genetrator;
 using OnlineLearn.Core.Security;
+using OnlineLearn.Core.Senders;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Entities.User;
 using System;
@@ -18,10 +19,12 @@ namespace OnlineLearn.Web.Controllers
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IViewRenderService _viewRender;
 
-        public AccountController(IUserService userService)
+        public AccountController(IUserService userService, IViewRenderService viewRender)
         {
             _userService = userService;
+            _viewRender = viewRender;
         }
 
         #region Registration
@@ -63,8 +66,10 @@ namespace OnlineLearn.Web.Controllers
             };
             _userService.AddUser(user);
 
-            #region Send Activation Email
-            #endregion
+            //Send Activation Email
+            var emailBody = _viewRender.RenderToStringAsync("_ActivationEmail", user);
+            SendEmail.Send(user.Email, "ایمیل فعالسازی", emailBody);
+
             return View("SuccessRegister", user);
         }
         #endregion
@@ -128,6 +133,61 @@ namespace OnlineLearn.Web.Controllers
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Redirect("/Login");
+        }
+        #endregion
+
+        #region ForgotPassword
+        [Route("ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [Route("ForgotPassword")]
+        [HttpPost]
+        public IActionResult ForgotPassword(ForgotPasswordVM forgot)
+        {
+            if (!ModelState.IsValid)
+                return View(forgot);
+            string fixedEmail = FixedText.FixEmail(forgot.Email);
+            User user = _userService.GetUserByEmail(fixedEmail);
+            if(user == null)
+            {
+                ModelState.AddModelError("Email", "کاربری یافت نشد");
+                return View(forgot);
+            }
+
+            var emailBody = _viewRender.RenderToStringAsync("_ForgotPassword", user);
+            SendEmail.Send(user.Email, "بازیابی حساب کاربری", emailBody);
+            ViewBag.IsSuccess = true;
+
+            return View();
+        }
+        #endregion
+
+        #region Reset Password
+        public IActionResult ResetPassword(string id)
+        {
+            return View(new ResetPasswordVM()
+            {
+                ActiveCode = id
+            });
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(ResetPasswordVM reset)
+        {
+            if (!ModelState.IsValid)
+                return View(reset);
+
+            User user = _userService.GetUserByActiveCode(reset.ActiveCode);
+            if (user == null)
+                return NotFound();
+            string hashNewPassword = PasswordHelper.EncodePasswordMd5(reset.Password);
+            user.Password = hashNewPassword;
+            _userService.UpdateUser(user);
+
             return Redirect("/Login");
         }
         #endregion
