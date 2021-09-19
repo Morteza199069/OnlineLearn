@@ -13,4 +13,11 @@ namespace OnlineLearn.Core.DTOs.User
         public DateTime RegisterDate { get; set; }
         public int Wallet { get; set; }
     }
+
+    public class UserPanelSideBarDataVM
+    {
+        public string UserName { get; set; }
+        public DateTime RegisterDate { get; set; }
+        public string ImageName { get; set; }
+    }
 }

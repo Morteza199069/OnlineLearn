@@ -69,6 +69,16 @@ namespace OnlineLearn.Core.Services
             return information;
         }
 
+        public UserPanelSideBarDataVM GetUserPanelSideBarData(string username)
+        {
+            return _context.Users.Where(u => u.UserName == username).Select(u => new UserPanelSideBarDataVM()
+            {
+                UserName=u.UserName,
+                RegisterDate=u.RegisterDate,
+                ImageName=u.UserAvatar
+            }).Single();
+        }
+
         public bool IsExistEmail(string email)
         {
             return _context.Users.Any(u => u.Email == email);

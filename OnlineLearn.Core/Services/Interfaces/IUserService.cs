@@ -25,6 +25,7 @@ namespace OnlineLearn.Core.Services.Interfaces
 
         #region UserPanel
         UserInformationVM GetUserInformation(string username);
+        UserPanelSideBarDataVM GetUserPanelSideBarData(string username);
         #endregion
     }
 }
