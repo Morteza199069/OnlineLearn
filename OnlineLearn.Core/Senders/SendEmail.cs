@@ -23,7 +23,7 @@ namespace OnlineLearn.Core.Senders
             // mail.Attachments.Add(attachment);
 
             SmtpServer.Port = 587;
-            SmtpServer.Credentials = new System.Net.NetworkCredential("webbdevmonster@gmail.com", "webbdev123");
+            SmtpServer.Credentials = new System.Net.NetworkCredential("webbdevmonster@gmail.com", "***");
             SmtpServer.EnableSsl = true;
 
             SmtpServer.Send(mail);

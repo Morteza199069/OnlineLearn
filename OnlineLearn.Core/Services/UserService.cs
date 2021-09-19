@@ -1,5 +1,6 @@
 ﻿using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.DTOs;
+using OnlineLearn.Core.DTOs.User;
 using OnlineLearn.Core.Genetrator;
 using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
@@ -49,6 +50,23 @@ namespace OnlineLearn.Core.Services
         public User GetUserByEmail(string email)
         {
             return _context.Users.SingleOrDefault(u => u.Email == email);
+        }
+
+        public User GetUserByUserName(string username)
+        {
+            return _context.Users.SingleOrDefault(u => u.UserName == username);
+        }
+
+        public UserInformationVM GetUserInformation(string username)
+        {
+            var user = GetUserByUserName(username);
+            UserInformationVM information = new UserInformationVM();
+            information.UserName = user.UserName;
+            information.Email = user.Email;
+            information.RegisterDate = user.RegisterDate;
+            information.Wallet = 0;
+
+            return information;
         }
 
         public bool IsExistEmail(string email)
