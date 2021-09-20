@@ -8,6 +8,7 @@ using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.User;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,34 @@ namespace OnlineLearn.Core.Services
             return user.UserId;
         }
 
+        public void EditProfile(string username, EditProfileVM profile)
+        {
+            if (profile.UserAvatar != null)
+            {
+                string imagePath = "";
+                if (profile.AvatarName != "Default.jpg")
+                {
+                    imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", profile.AvatarName);
+                    if (File.Exists(imagePath))
+                    {
+                        File.Delete(imagePath);
+                    }
+                }
+                profile.AvatarName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(profile.UserAvatar.FileName);
+                imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", profile.AvatarName);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    profile.UserAvatar.CopyTo(stream);
+                }
+            }
+            var user = GetUserByUserName(username);
+            user.UserName = profile.UserName;
+            user.Email = profile.Email;
+            user.UserAvatar = profile.AvatarName;
+
+            UpdateUser(user);
+        }
+
         public User GetUserByActiveCode(string activeCode)
         {
             return _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
@@ -55,6 +84,16 @@ namespace OnlineLearn.Core.Services
         public User GetUserByUserName(string username)
         {
             return _context.Users.SingleOrDefault(u => u.UserName == username);
+        }
+
+        public EditProfileVM GetUserDataToEditProfile(string username)
+        {
+            return _context.Users.Where(u => u.UserName == username).Select(u => new EditProfileVM()
+            {
+                UserName = u.UserName,
+                Email = u.Email,
+                AvatarName = u.UserAvatar
+            }).Single();
         }
 
         public UserInformationVM GetUserInformation(string username)
@@ -73,9 +112,9 @@ namespace OnlineLearn.Core.Services
         {
             return _context.Users.Where(u => u.UserName == username).Select(u => new UserPanelSideBarDataVM()
             {
-                UserName=u.UserName,
-                RegisterDate=u.RegisterDate,
-                ImageName=u.UserAvatar
+                UserName = u.UserName,
+                RegisterDate = u.RegisterDate,
+                ImageName = u.UserAvatar
             }).Single();
         }
 
