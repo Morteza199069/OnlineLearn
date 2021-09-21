@@ -28,6 +28,8 @@ namespace OnlineLearn.Core.Services.Interfaces
         UserPanelSideBarDataVM GetUserPanelSideBarData(string username);
         EditProfileVM GetUserDataToEditProfile(string username);
         void EditProfile(string username, EditProfileVM profile);
+        bool CompareOldPassword(string username, string oldPassword);
+        void ChangeUserPassword(string username, string newPassword);
         #endregion
     }
 }

@@ -27,6 +27,8 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
             return View(_userService.GetUserInformation(User.Identity.Name));
         }
 
+        #region EditProfile
+
         [Route("UserPanel/EditProfile")]
         public IActionResult EditProfile()
         {
@@ -46,5 +48,32 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
 
             return Redirect("/Login?EditProfile=true");
         }
+        #endregion
+
+        #region ChangePassword
+        [Route("UserPanel/ChangePassword")]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [Route("UserPanel/ChangePassword")]
+        [HttpPost]
+        public IActionResult ChangePassword(ChangePasswordVM change)
+        {
+            string currentUserName = User.Identity.Name;
+            if (!ModelState.IsValid)
+                return View(change);
+            if(!_userService.CompareOldPassword(currentUserName,change.OldPassword))
+            {
+                ModelState.AddModelError("OldPassword", "کلمه عبور فعلی صحیح نمیباشد");
+                return View(change);
+            }
+            _userService.ChangeUserPassword(currentUserName, change.Password);
+            ViewBag.IsSuccess = true;
+
+            return View();
+        }
+        #endregion
     }
 }

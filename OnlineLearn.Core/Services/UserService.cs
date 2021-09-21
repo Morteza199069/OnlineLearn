@@ -43,6 +43,19 @@ namespace OnlineLearn.Core.Services
             return user.UserId;
         }
 
+        public void ChangeUserPassword(string username, string newPassword)
+        {
+            var user = GetUserByUserName(username);
+            user.Password = PasswordHelper.EncodePasswordMd5(newPassword);
+            UpdateUser(user);
+        }
+
+        public bool CompareOldPassword(string username, string oldPassword)
+        {
+            string hashOldPassword = PasswordHelper.EncodePasswordMd5(oldPassword);
+            return _context.Users.Any(u => u.UserName == username && u.Password == hashOldPassword);
+        }
+
         public void EditProfile(string username, EditProfileVM profile)
         {
             if (profile.UserAvatar != null)
