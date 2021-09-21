@@ -52,6 +52,7 @@ namespace OnlineLearn.DataLayer.Entities.User
 
         #region Relations
         public virtual List<UserRole> UserRoles { get; set; }
+        public List<Wallet.Wallet> Wallets { get; set; }
         #endregion
     }
 }
