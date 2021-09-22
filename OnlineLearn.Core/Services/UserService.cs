@@ -6,6 +6,7 @@ using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.User;
+using OnlineLearn.DataLayer.Entities.Wallet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,11 +44,34 @@ namespace OnlineLearn.Core.Services
             return user.UserId;
         }
 
+        public int AddWallet(Wallet wallet)
+        {
+            _context.Add(wallet);
+            _context.SaveChanges();
+
+            return wallet.WalletId;
+        }
+
         public void ChangeUserPassword(string username, string newPassword)
         {
             var user = GetUserByUserName(username);
             user.Password = PasswordHelper.EncodePasswordMd5(newPassword);
             UpdateUser(user);
+        }
+
+        public int ChargeWallet(string username, int amount, string description, bool isPay = false)
+        {
+            Wallet wallet = new Wallet()
+            {
+                Amount = amount,
+                Description = description,
+                CreateDate = DateTime.Now,
+                IsPay = isPay,
+                TypeId = 1,
+                UserId = GetUserIdByUserName(username)
+            };
+
+            return AddWallet(wallet);
         }
 
         public bool CompareOldPassword(string username, string oldPassword)
@@ -109,6 +133,11 @@ namespace OnlineLearn.Core.Services
             }).Single();
         }
 
+        public int GetUserIdByUserName(string username)
+        {
+            return _context.Users.Single(u => u.UserName == username).UserId;
+        }
+
         public UserInformationVM GetUserInformation(string username)
         {
             var user = GetUserByUserName(username);
@@ -116,7 +145,7 @@ namespace OnlineLearn.Core.Services
             information.UserName = user.UserName;
             information.Email = user.Email;
             information.RegisterDate = user.RegisterDate;
-            information.Wallet = 0;
+            information.Wallet = UserWalletBalance(username);
 
             return information;
         }
@@ -129,6 +158,18 @@ namespace OnlineLearn.Core.Services
                 RegisterDate = u.RegisterDate,
                 ImageName = u.UserAvatar
             }).Single();
+        }
+
+        public List<WalletVM> GetUserWallet(string username)
+        {
+            int userId = GetUserIdByUserName(username);
+            return _context.Wallets.Where(w => w.UserId == userId && w.IsPay).Select(w => new WalletVM()
+            {
+                Amount = w.Amount,
+                DateTime = DateTime.Now,
+                Description = w.Description,
+                Type = w.TypeId
+            }).ToList();
         }
 
         public bool IsExistEmail(string email)
@@ -152,6 +193,18 @@ namespace OnlineLearn.Core.Services
         {
             _context.Update(user);
             _context.SaveChanges();
+        }
+
+        public int UserWalletBalance(string username)
+        {
+            int userId = GetUserIdByUserName(username);
+            var deposit = _context.Wallets.Where(w => w.UserId == userId && w.TypeId == 1 && w.IsPay)
+                .Select(w => w.Amount).ToList();
+
+            var withdrawal = _context.Wallets.Where(w => w.UserId == userId && w.TypeId == 2)
+                .Select(w => w.Amount).ToList();
+
+            return (deposit.Sum() - withdrawal.Sum());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using OnlineLearn.Core.DTOs;
 using OnlineLearn.Core.DTOs.User;
 using OnlineLearn.DataLayer.Entities.User;
+using OnlineLearn.DataLayer.Entities.Wallet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         User GetUserByEmail(string email);
         User GetUserByActiveCode(string activeCode);
         User GetUserByUserName(string username);
+        int GetUserIdByUserName(string username);
         void UpdateUser(User user);
         bool ActiveAccount(string activeCode);
         #endregion
@@ -30,6 +32,13 @@ namespace OnlineLearn.Core.Services.Interfaces
         void EditProfile(string username, EditProfileVM profile);
         bool CompareOldPassword(string username, string oldPassword);
         void ChangeUserPassword(string username, string newPassword);
+        #endregion
+
+        #region Wallet
+        int UserWalletBalance(string username);
+        List<WalletVM> GetUserWallet(string username);
+        int ChargeWallet(string username, int amount, string description, bool isPay = false);
+        int AddWallet(Wallet wallet);
         #endregion
     }
 }
