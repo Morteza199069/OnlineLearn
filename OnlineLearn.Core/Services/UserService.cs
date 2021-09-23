@@ -172,6 +172,11 @@ namespace OnlineLearn.Core.Services
             }).ToList();
         }
 
+        public Wallet GetWalletByWalletId(int walletId)
+        {
+            return _context.Wallets.Find(walletId);
+        }
+
         public bool IsExistEmail(string email)
         {
             return _context.Users.Any(u => u.Email == email);
@@ -192,6 +197,12 @@ namespace OnlineLearn.Core.Services
         public void UpdateUser(User user)
         {
             _context.Update(user);
+            _context.SaveChanges();
+        }
+
+        public void UpdateWallet(Wallet wallet)
+        {
+            _context.Wallets.Update(wallet);
             _context.SaveChanges();
         }
 

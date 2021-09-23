@@ -39,6 +39,8 @@ namespace OnlineLearn.Core.Services.Interfaces
         List<WalletVM> GetUserWallet(string username);
         int ChargeWallet(string username, int amount, string description, bool isPay = false);
         int AddWallet(Wallet wallet);
+        Wallet GetWalletByWalletId(int walletId);
+        void UpdateWallet(Wallet wallet);
         #endregion
     }
 }

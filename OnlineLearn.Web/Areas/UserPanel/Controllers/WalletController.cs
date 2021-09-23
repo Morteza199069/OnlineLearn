@@ -36,9 +36,16 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
                 return View(charge);
             }
 
-            _userService.ChargeWallet(User.Identity.Name, charge.Amount, "شارژ حساب");
+            int walletId = _userService.ChargeWallet(User.Identity.Name, charge.Amount, "شارژ حساب");
 
-            // online payment
+            //Online Payment
+            var payment = new ZarinpalSandbox.Payment(charge.Amount);
+            var response = payment.PaymentRequest("شارژ کیف پول", "https://localhost:44300/OnlinePayment/" + walletId);
+
+            if(response.Result.Status==100)
+            {
+                return Redirect("https://sandbox.zarinpal.com/pg/StartPay/" + response.Result.Authority);
+            }
 
             return null;
         }
