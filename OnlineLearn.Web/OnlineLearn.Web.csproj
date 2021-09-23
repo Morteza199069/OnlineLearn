@@ -34,4 +34,8 @@
     <ProjectReference Include="..\OnlineLearn.DataLayer\OnlineLearn.DataLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
 </Project>

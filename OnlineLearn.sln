@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31624.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineLearn.Web", "OnlineLearn.Web\OnlineLearn.Web.csproj", "{AA78E627-9B2D-4994-81E4-6EFA4D913BFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLearn.Web", "OnlineLearn.Web\OnlineLearn.Web.csproj", "{AA78E627-9B2D-4994-81E4-6EFA4D913BFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineLearn.Core", "OnlineLearn.Core\OnlineLearn.Core.csproj", "{A209A621-A081-476A-8741-37F5E29DA7A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLearn.Core", "OnlineLearn.Core\OnlineLearn.Core.csproj", "{A209A621-A081-476A-8741-37F5E29DA7A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineLearn.DataLayer", "OnlineLearn.DataLayer\OnlineLearn.DataLayer.csproj", "{4466CECF-6355-4E83-8A2A-730E31F81D69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineLearn.DataLayer", "OnlineLearn.DataLayer\OnlineLearn.DataLayer.csproj", "{4466CECF-6355-4E83-8A2A-730E31F81D69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

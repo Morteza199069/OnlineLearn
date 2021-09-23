@@ -82,6 +82,8 @@ namespace OnlineLearn.Web
                     name: "Default",
                     pattern: "{controller=Home}/{action=Index}/{id?}"
                 );
+
+                endpoints.MapRazorPages();
             });
 
             //app.UseEndpoints(endpoints =>
