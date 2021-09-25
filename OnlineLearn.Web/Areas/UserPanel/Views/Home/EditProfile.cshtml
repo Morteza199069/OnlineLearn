@@ -1,5 +1,4 @@
-﻿@model OnlineLearn.Core.DTOs.User.EditProfileVM
-
+﻿@model OnlineLearn.Core.DTOs.EditProfileVM
 @{
     ViewData["Title"] = "ویرایش حساب کاربری";
 }
@@ -7,7 +6,7 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">آنلاین لرن</a></li>
+            <li class="breadcrumb-item"><a href="/">تاپ لرن</a></li>
             <li class="breadcrumb-item active" aria-current="page"> ویرایش پروفایل </li>
         </ul>
     </nav>
@@ -25,12 +24,12 @@
                             <div class="inner form-layer">
                                 <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
                                     <input type="hidden" asp-for="AvatarName" />
-                                    @*@if (ViewBag.IsSuccess != null)
+                                    @if (ViewBag.IsSuccess != null)
                                     {
                                         <div class="alert alert-success">
                                             اطلاعات کاربری شما با موفقیت ویرایش شد
                                         </div>
-                                    }*@
+                                    }
 
                                     <div class="row">
                                         <div class="col-md-7 col-sm-8 col-xs-12">
@@ -49,7 +48,7 @@
                                             <p class="help-block">
                                                 آواتار
                                             </p>
-                                            <input type="file" asp-for="UserAvatar" />
+                                            <input type="file"  asp-for="UserAvatar"/>
                                             <p>لطفا فقط تصویر انتخاب کنید</p>
                                             <img class="thumbnail" src="/UserAvatar/@Model.AvatarName" style="max-width:150px" />
                                         </div>

@@ -1,5 +1,4 @@
 ﻿using OnlineLearn.Core.DTOs;
-using OnlineLearn.Core.DTOs.User;
 using OnlineLearn.DataLayer.Entities.User;
 using OnlineLearn.DataLayer.Entities.Wallet;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopLearn.Core.DTOs;
 
 namespace OnlineLearn.Core.Services.Interfaces
 {
@@ -41,6 +41,10 @@ namespace OnlineLearn.Core.Services.Interfaces
         int AddWallet(Wallet wallet);
         Wallet GetWalletByWalletId(int walletId);
         void UpdateWallet(Wallet wallet);
+        #endregion
+
+        #region Admin Panel
+        UsersInAdminVM GetUsers(int pageId = 1, string filterEmail = "", string filterUsername = "");
         #endregion
     }
 }

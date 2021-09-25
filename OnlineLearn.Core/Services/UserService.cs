@@ -1,6 +1,5 @@
 ﻿using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.DTOs;
-using OnlineLearn.Core.DTOs.User;
 using OnlineLearn.Core.Genetrator;
 using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
@@ -13,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopLearn.Core.DTOs;
 
 namespace OnlineLearn.Core.Services
 {
@@ -158,6 +158,30 @@ namespace OnlineLearn.Core.Services
                 RegisterDate = u.RegisterDate,
                 ImageName = u.UserAvatar
             }).Single();
+        }
+
+        public UsersInAdminVM GetUsers(int pageId = 1, string filterEmail = "", string filterUsername = "")
+        {
+            IQueryable<User> result = _context.Users;
+
+            if(!string.IsNullOrEmpty(filterEmail))
+            {
+                result = result.Where(u => u.Email.Contains(filterEmail));
+            }
+
+            if(!string.IsNullOrEmpty(filterUsername))
+            {
+                result = result.Where(u => u.UserName.Contains(filterUsername));
+            }
+
+            int take = 20;
+            int skip = (pageId - 1) * take;
+            UsersInAdminVM list = new UsersInAdminVM();
+            list.CurrentPage = pageId;
+            list.PageCount = result.Count() / take;
+            list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
+
+            return list;
         }
 
         public List<WalletVM> GetUserWallet(string username)

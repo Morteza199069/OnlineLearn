@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OnlineLearn.Core.DTOs.User;
+using OnlineLearn.Core.DTOs;
 using OnlineLearn.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;

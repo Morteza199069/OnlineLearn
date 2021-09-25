@@ -1,8 +1,7 @@
-﻿@model OnlineLearn.Core.DTOs.User.UserInformationVM
-@using OnlineLearn.Core.Convertors
-
+﻿@using OnlineLearn.Core.Convertors
+@model OnlineLearn.Core.DTOs.UserInformationVM
 @{
-    ViewData["Title"] = "پنل کاربری " + User.Identity.Name;
+    ViewData["Title"] = "پنل کاربری "+User.Identity.Name;
 }
 
 <div class="container">
@@ -18,7 +17,7 @@
     <div class="container">
         <div class="user-account">
             <div class="row">
-                <partial name="_SideBar" />
+              <partial name="_SideBar" />
                 <div class="col-md-9 col-sm-8 col-xs-12">
                     <section class="user-account-content">
                         <header><h1> داشبورد </h1></header>
@@ -39,4 +38,3 @@
         </div>
     </div>
 </main>
-

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineLearn.Core.DTOs.User
+namespace OnlineLearn.Core.DTOs
 {
     public class UserInformationVM
     {
