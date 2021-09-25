@@ -44,6 +44,31 @@ namespace OnlineLearn.Core.Services
             return user.UserId;
         }
 
+        public int AddUserFromAdmin(CreateUserVM user)
+        {
+            User addUser = new User();
+            addUser.Password = PasswordHelper.EncodePasswordMd5(user.Password);
+            addUser.ActiveCode = NameGenerator.GenerateUniqueCode();
+            addUser.Email = user.Email;
+            addUser.UserName = user.UserName;
+            addUser.IsActive = true;
+            addUser.RegisterDate = DateTime.Now;
+            addUser.IsDelete = false;
+
+            if(user.UserAvatar != null)
+            {
+                string imagePath = "";
+                addUser.UserAvatar = Path.Combine(Directory.GetCurrentDirectory() + Path.GetExtension(user.UserAvatar.FileName));
+                imagePath = Path.Combine(Directory.GetCurrentDirectory() + "wwwroot/UserAvatar", addUser.UserAvatar);
+                using (var stream=new FileStream(imagePath,FileMode.Create))
+                {
+                    user.UserAvatar.CopyTo(stream);
+                }
+            }
+
+            return AddUser(addUser);
+        }
+
         public int AddWallet(Wallet wallet)
         {
             _context.Add(wallet);

@@ -45,6 +45,7 @@ namespace OnlineLearn.Core.Services.Interfaces
 
         #region Admin Panel
         UsersInAdminVM GetUsers(int pageId = 1, string filterEmail = "", string filterUsername = "");
+        int AddUserFromAdmin(CreateUserVM user);
         #endregion
     }
 }
