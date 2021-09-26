@@ -12,6 +12,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         #region Permission
         List<Role> GetRoles();
         void AddRolesToUser(List<int> roleIds, int userId);
+        void EditUserRoles(int userId, List<int> roleIds);
         #endregion
     }
 }

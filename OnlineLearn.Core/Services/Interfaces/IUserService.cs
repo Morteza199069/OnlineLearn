@@ -18,6 +18,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         int AddUser(User user);
         User LoginUser(LoginVM login);
         User GetUserByEmail(string email);
+        User GetUserById(int userId);
         User GetUserByActiveCode(string activeCode);
         User GetUserByUserName(string username);
         int GetUserIdByUserName(string username);
@@ -46,6 +47,8 @@ namespace OnlineLearn.Core.Services.Interfaces
         #region Admin Panel
         UsersInAdminVM GetUsers(int pageId = 1, string filterEmail = "", string filterUsername = "");
         int AddUserFromAdmin(CreateUserVM user);
+        EditUserVM ShowUserInEditMode(int userId);
+        void EditUserFromAdmin(EditUserVM editUser);
         #endregion
     }
 }

@@ -20,7 +20,7 @@ namespace OnlineLearn.Core.Services
 
         public void AddRolesToUser(List<int> roleIds, int userId)
         {
-            foreach (var roleId in roleIds)
+            foreach (int roleId in roleIds)
             {
                 _context.UserRoles.Add(new UserRole()
                 {
@@ -28,6 +28,17 @@ namespace OnlineLearn.Core.Services
                     UserId = userId
                 });
             }
+
+            _context.SaveChanges();
+        }
+
+        public void EditUserRoles(int userId, List<int> roleIds)
+        {
+            //Delete All User Roles 
+            _context.UserRoles.Where(r => r.UserId == userId).ToList().ForEach(r => _context.UserRoles.Remove(r));
+
+            //Add New Roles
+            AddRolesToUser(roleIds, userId);
         }
 
         public List<Role> GetRoles()

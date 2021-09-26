@@ -55,12 +55,12 @@ namespace OnlineLearn.Core.Services
             addUser.RegisterDate = DateTime.Now;
             addUser.IsDelete = false;
 
-            if(user.UserAvatar != null)
+            if (user.UserAvatar != null)
             {
                 string imagePath = "";
                 addUser.UserAvatar = Path.Combine(Directory.GetCurrentDirectory() + Path.GetExtension(user.UserAvatar.FileName));
                 imagePath = Path.Combine(Directory.GetCurrentDirectory() + "wwwroot/UserAvatar", addUser.UserAvatar);
-                using (var stream=new FileStream(imagePath,FileMode.Create))
+                using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     user.UserAvatar.CopyTo(stream);
                 }
@@ -133,6 +133,40 @@ namespace OnlineLearn.Core.Services
             UpdateUser(user);
         }
 
+        public void EditUserFromAdmin(EditUserVM editUser)
+        {
+            User user = GetUserById(editUser.UserId);
+            user.Email = editUser.Email;
+            if (!string.IsNullOrEmpty(editUser.Password))
+            {
+                user.Password = PasswordHelper.EncodePasswordMd5(editUser.Password);
+            }
+
+            if (editUser.UserAvatar != null)
+            {
+                //Delete old Image
+                if (editUser.AvatarName != "Default.jpg")
+                {
+                    string deletePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", editUser.AvatarName);
+                    if (File.Exists(deletePath))
+                    {
+                        File.Delete(deletePath);
+                    }
+                }
+
+                //Save New Image
+                user.UserAvatar = NameGenerator.GenerateUniqueCode() + Path.GetExtension(editUser.UserAvatar.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserAvatar", user.UserAvatar);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    editUser.UserAvatar.CopyTo(stream);
+                }
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+        }
+
         public User GetUserByActiveCode(string activeCode)
         {
             return _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
@@ -141,6 +175,11 @@ namespace OnlineLearn.Core.Services
         public User GetUserByEmail(string email)
         {
             return _context.Users.SingleOrDefault(u => u.Email == email);
+        }
+
+        public User GetUserById(int userId)
+        {
+            return _context.Users.Find(userId);
         }
 
         public User GetUserByUserName(string username)
@@ -189,12 +228,12 @@ namespace OnlineLearn.Core.Services
         {
             IQueryable<User> result = _context.Users;
 
-            if(!string.IsNullOrEmpty(filterEmail))
+            if (!string.IsNullOrEmpty(filterEmail))
             {
                 result = result.Where(u => u.Email.Contains(filterEmail));
             }
 
-            if(!string.IsNullOrEmpty(filterUsername))
+            if (!string.IsNullOrEmpty(filterUsername))
             {
                 result = result.Where(u => u.UserName.Contains(filterUsername));
             }
@@ -241,6 +280,18 @@ namespace OnlineLearn.Core.Services
             string hashPassword = PasswordHelper.EncodePasswordMd5(login.Password);
             string email = FixedText.FixEmail(login.Email);
             return _context.Users.SingleOrDefault(u => u.Email == email && u.Password == hashPassword);
+        }
+
+        public EditUserVM ShowUserInEditMode(int userId)
+        {
+            return _context.Users.Where(u => u.UserId == userId).Select(u => new EditUserVM()
+            {
+                UserId = u.UserId,
+                AvatarName = u.UserAvatar,
+                Email = u.Email,
+                UserName = u.UserName,
+                UserRoles = u.UserRoles.Select(r => r.RoleId).ToList()
+            }).Single();
         }
 
         public void UpdateUser(User user)
