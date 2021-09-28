@@ -23,11 +23,13 @@ namespace OnlineLearn.Core.Services.Interfaces
         User GetUserByUserName(string username);
         int GetUserIdByUserName(string username);
         void UpdateUser(User user);
+        void DeleteUser(int userId);
         bool ActiveAccount(string activeCode);
         #endregion
 
         #region UserPanel
         UserInformationVM GetUserInformation(string username);
+        UserInformationVM GetUserInformation(int userId);
         UserPanelSideBarDataVM GetUserPanelSideBarData(string username);
         EditProfileVM GetUserDataToEditProfile(string username);
         void EditProfile(string username, EditProfileVM profile);
@@ -46,6 +48,7 @@ namespace OnlineLearn.Core.Services.Interfaces
 
         #region Admin Panel
         UsersInAdminVM GetUsers(int pageId = 1, string filterEmail = "", string filterUsername = "");
+        UsersInAdminVM GetDeletedUsers(int pageId = 1, string filterEmail = "", string filterUsername = "");
         int AddUserFromAdmin(CreateUserVM user);
         EditUserVM ShowUserInEditMode(int userId);
         void EditUserFromAdmin(EditUserVM editUser);

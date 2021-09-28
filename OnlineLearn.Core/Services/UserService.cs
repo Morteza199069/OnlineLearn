@@ -1,4 +1,5 @@
-﻿using OnlineLearn.Core.Convertors;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.DTOs;
 using OnlineLearn.Core.Genetrator;
 using OnlineLearn.Core.Security;
@@ -105,6 +106,13 @@ namespace OnlineLearn.Core.Services
             return _context.Users.Any(u => u.UserName == username && u.Password == hashOldPassword);
         }
 
+        public void DeleteUser(int userId)
+        {
+            User user = GetUserById(userId);
+            user.IsDelete = true;
+            UpdateUser(user);
+        }
+
         public void EditProfile(string username, EditProfileVM profile)
         {
             if (profile.UserAvatar != null)
@@ -167,6 +175,30 @@ namespace OnlineLearn.Core.Services
             _context.SaveChanges();
         }
 
+        public UsersInAdminVM GetDeletedUsers(int pageId = 1, string filterEmail = "", string filterUsername = "")
+        {
+            IQueryable<User> result = _context.Users.IgnoreQueryFilters().Where(u => u.IsDelete);
+
+            if (!string.IsNullOrEmpty(filterEmail))
+            {
+                result = result.Where(u => u.Email.Contains(filterEmail));
+            }
+
+            if (!string.IsNullOrEmpty(filterUsername))
+            {
+                result = result.Where(u => u.UserName.Contains(filterUsername));
+            }
+
+            int take = 20;
+            int skip = (pageId - 1) * take;
+            UsersInAdminVM list = new UsersInAdminVM();
+            list.CurrentPage = pageId;
+            list.PageCount = result.Count() / take;
+            list.Users = result.OrderBy(u => u.RegisterDate).Skip(skip).Take(take).ToList();
+
+            return list;
+        }
+
         public User GetUserByActiveCode(string activeCode)
         {
             return _context.Users.SingleOrDefault(u => u.ActiveCode == activeCode);
@@ -210,6 +242,18 @@ namespace OnlineLearn.Core.Services
             information.Email = user.Email;
             information.RegisterDate = user.RegisterDate;
             information.Wallet = UserWalletBalance(username);
+
+            return information;
+        }
+
+        public UserInformationVM GetUserInformation(int userId)
+        {
+            var user = GetUserById(userId);
+            UserInformationVM information = new UserInformationVM();
+            information.UserName = user.UserName;
+            information.Email = user.Email;
+            information.RegisterDate = user.RegisterDate;
+            information.Wallet = UserWalletBalance(user.UserName);
 
             return information;
         }

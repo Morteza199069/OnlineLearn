@@ -28,5 +28,10 @@ namespace OnlineLearn.DataLayer.Context
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<WalletType> WalletTypes { get; set; }
         #endregion
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDelete);
+        }
     }
 }
