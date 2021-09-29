@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearn.DataLayer.Context;
 
 namespace OnlineLearn.DataLayer.Migrations
 {
     [DbContext(typeof(OnlineLearnContext))]
-    partial class OnlineLearnContextModelSnapshot : ModelSnapshot
+    [Migration("20210929075738_Mig_PermissionsTables")]
+    partial class Mig_PermissionsTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

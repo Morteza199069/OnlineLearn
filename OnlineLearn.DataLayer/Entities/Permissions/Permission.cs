@@ -1,39 +1,27 @@
-﻿using OnlineLearn.DataLayer.Entities.Permissions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OnlineLearn.DataLayer.Entities.User
+namespace OnlineLearn.DataLayer.Entities.Permissions
 {
-    public class Role
+    public class Permission
     {
-        public Role()
-        {
-
-        }
-
-
         [Key]
-        public int RoleId { get; set; }
+        public int PermissionId { get; set; }
 
         [Display(Name = "عنوان نقش")]
         [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
         [MaxLength(200, ErrorMessage = "{0} نمی تواند بیشتر از {1} کاراکتر باشد .")]
-        public string RoleTitle { get; set; }
+        public string PermissionTitle { get; set; }
 
-        public bool IsDelete { get; set; }
+        public int? ParentID { get; set; }
 
-
-
-
-        #region Relations
-
-        public virtual List<UserRole> UserRoles { get; set; }
+        [ForeignKey("ParentID")]
+        public List<Permission> Permissions { get; set; }
         public List<RolePermission> RolePermissions { get; set; }
-
-        #endregion
     }
 }

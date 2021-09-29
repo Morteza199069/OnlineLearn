@@ -23,15 +23,17 @@ namespace OnlineLearn.Web.Pages.Admin.Roles
         public void OnGet(int id)
         {
             Role = _permissionService.GetRoleById(id);
+            ViewData["Permissions"] = _permissionService.GetAllPermissions();
+            ViewData["SelectedPermissions"] = _permissionService.PermissionRoles(id);
         }
 
-        public IActionResult OnPost()
+        public IActionResult OnPost(List<int> SelectedPermission)
         {
             if (!ModelState.IsValid)
                 return Page();
 
             _permissionService.UpdateRole(Role);
-            //TODO Add Permission
+            _permissionService.UpdatePermissionRoles(Role.RoleId, SelectedPermission);
 
             return RedirectToPage("Index");
         }

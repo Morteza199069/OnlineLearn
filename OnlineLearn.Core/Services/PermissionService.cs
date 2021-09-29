@@ -1,5 +1,6 @@
 ﻿using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
+using OnlineLearn.DataLayer.Entities.Permissions;
 using OnlineLearn.DataLayer.Entities.User;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,20 @@ namespace OnlineLearn.Core.Services
         public PermissionService(OnlineLearnContext context)
         {
             _context = context;
+        }
+
+        public void AddPermissionsToRole(int roleId, List<int> permission)
+        {
+            foreach (var p in permission)
+            {
+                _context.RolePermissions.Add(new RolePermission()
+                {
+                    PermissionId = p,
+                    RoleId = roleId
+                });
+            }
+
+            _context.SaveChanges();
         }
 
         public int AddRole(Role role)
@@ -54,6 +69,11 @@ namespace OnlineLearn.Core.Services
             AddRolesToUser(roleIds, userId);
         }
 
+        public List<Permission> GetAllPermissions()
+        {
+            return _context.Permissions.ToList();
+        }
+
         public Role GetRoleById(int roleId)
         {
             return _context.Roles.Find(roleId);
@@ -62,6 +82,19 @@ namespace OnlineLearn.Core.Services
         public List<Role> GetRoles()
         {
             return _context.Roles.ToList();
+        }
+
+        public List<int> PermissionRoles(int roleId)
+        {
+            return _context.RolePermissions.Where(r => r.RoleId == roleId).Select(r => r.PermissionId).ToList();
+        }
+
+        public void UpdatePermissionRoles(int roleId, List<int> permissions)
+        {
+            _context.RolePermissions.Where(p => p.RoleId == roleId).ToList()
+                .ForEach(p => _context.RolePermissions.Remove(p));
+
+            AddPermissionsToRole(roleId, permissions);
         }
 
         public void UpdateRole(Role role)

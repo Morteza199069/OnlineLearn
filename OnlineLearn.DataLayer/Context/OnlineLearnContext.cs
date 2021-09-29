@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineLearn.DataLayer.Entities.Permissions;
 using OnlineLearn.DataLayer.Entities.User;
 using OnlineLearn.DataLayer.Entities.Wallet;
 using System;
@@ -27,6 +28,11 @@ namespace OnlineLearn.DataLayer.Context
         #region Wallet
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<WalletType> WalletTypes { get; set; }
+        #endregion
+
+        #region
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
