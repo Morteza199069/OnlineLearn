@@ -54,6 +54,21 @@ namespace OnlineLearn.Core.Services
             _context.SaveChanges();
         }
 
+        public bool CheckPermission(int permissionId, string username)
+        {
+            int userId = _context.Users.Single(u => u.UserName == username).UserId;
+            List<int> userRoles = _context.UserRoles.Where(r => r.UserId == userId)
+                .Select(r => r.RoleId).ToList();
+
+            if (!userRoles.Any())
+                return false;
+
+            List<int> rolesPermission = _context.RolePermissions.Where(p => p.PermissionId == permissionId)
+                .Select(p => p.RoleId).ToList();
+
+            return rolesPermission.Any(p => userRoles.Contains(p));
+        }
+
         public void DeleteRole(Role role)
         {
             role.IsDelete = true;

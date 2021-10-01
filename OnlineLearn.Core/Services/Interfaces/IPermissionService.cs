@@ -25,6 +25,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         void AddPermissionsToRole(int roleId, List<int> permission);
         List<int> PermissionRoles(int roleId);
         void UpdatePermissionRoles(int roleId, List<int> permissions);
+        bool CheckPermission(int permissionId, string username);
         #endregion
     }
 }

@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Entities.User;
 
 namespace OnlineLearn.Web.Pages.Admin.Roles
 {
+    [PermissionChecker(6)]
     public class IndexModel : PageModel
     {
         private IPermissionService _permissionService;
