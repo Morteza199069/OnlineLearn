@@ -26,5 +26,13 @@ namespace OnlineLearn.DataLayer.Entities.Course
 
         [ForeignKey("ParentId")]
         public List<CourseGroup> CourseGroups { get; set; }
+
+        [InverseProperty("CourseGroup")]
+        [NotMapped]
+        public List<Course> Courses { get; set; }
+
+        [InverseProperty("Group")]
+        [NotMapped]
+        public List<Course> SubGroup { get; set; }
     }
 }
