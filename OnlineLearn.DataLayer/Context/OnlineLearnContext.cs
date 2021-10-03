@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineLearn.DataLayer.Entities.Course;
 using OnlineLearn.DataLayer.Entities.Permissions;
 using OnlineLearn.DataLayer.Entities.User;
 using OnlineLearn.DataLayer.Entities.Wallet;
@@ -30,15 +31,20 @@ namespace OnlineLearn.DataLayer.Context
         public DbSet<WalletType> WalletTypes { get; set; }
         #endregion
 
-        #region
+        #region Permission
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
+        #endregion
+
+        #region Course
+        public DbSet<CourseGroup> CourseGroups { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDelete);
             modelBuilder.Entity<Role>().HasQueryFilter(r => !r.IsDelete);
+            modelBuilder.Entity<CourseGroup>().HasQueryFilter(g => !g.IsDelete);
         }
     }
 }

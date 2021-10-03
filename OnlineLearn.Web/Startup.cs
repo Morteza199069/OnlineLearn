@@ -10,6 +10,7 @@ using OnlineLearn.Core.Convertors;
 using OnlineLearn.Core.Services;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
+using OnlineLearn.DataLayer.Entities.Course;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,7 @@ namespace OnlineLearn.Web
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IViewRenderService, RenderViewToString>();
             services.AddTransient<IPermissionService, PermissionService>();
+            services.AddTransient<ICourseService, CourseService>();
             #endregion
 
         }
