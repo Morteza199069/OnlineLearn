@@ -63,13 +63,13 @@
             </div>
             <div class="form-group">
                 <label>سطح دوره</label>
-                <select class="form-control" asp-for="Course.LevelId" asp-items="@(ViewData["Levels"] as SelectList)"></select>
-                <span asp-validation-for="Course.LevelId"></span>
+                <select class="form-control" asp-for="Course.CourseLevel" asp-items="@(ViewData["Levels"] as SelectList)"></select>
+                <span asp-validation-for="Course.CourseLevel"></span>
             </div>
             <div class="form-group">
                 <label>وضعیت دوره</label>
-                <select class="form-control" asp-for="Course.StatusId" asp-items="@(ViewData["Status"] as SelectList)"></select>
-                <span asp-validation-for="Course.StatusId"></span>
+                <select class="form-control" asp-for="Course.CourseStatus" asp-items="@(ViewData["Status"] as SelectList)"></select>
+                <span asp-validation-for="Course.CourseStatus"></span>
             </div>
         </div>
     </form>

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -39,16 +38,6 @@ namespace OnlineLearn.Web.Pages.Admin.Courses
             var statues = _courseService.GetStatus();
             ViewData["Status"] = new SelectList(statues, "Value", "Text");
 
-        }
-
-        public IActionResult OnPost(IFormFile imgCourseUp, IFormFile demoUp)
-        {
-            if (!ModelState.IsValid)
-                return Page();
-
-            _courseService.AddCourse(Course, imgCourseUp, demoUp);
-
-            return RedirectToPage("Index");
         }
     }
 }
