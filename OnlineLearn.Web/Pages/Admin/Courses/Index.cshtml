@@ -32,7 +32,28 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            @foreach (var item in Model.ListCourse)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="/course/thumb/@item.ImageName" class="thumbnail" />
+                                    </td>
+                                    <td>
+                                        @item.Title
+                                    </td>
+                                    <td>
+                                        @item.EpisodeCount
+                                    </td>
+                                    <td>
+                                        <a href="/Admin/Courses/EditCourse/@item.CourseId" class="btn btn-warning btn-sm">
+                                            ویرایش
+                                        </a>
+                                        <a href="/Admin/Courses/IndexEpisode/@item.CourseId" class="btn btn-warning btn-sm">
+                                            افزودن
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>

@@ -1,10 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OnlineLearn.Core.Convertors;
+using OnlineLearn.Core.DTOs;
+using OnlineLearn.Core.Genetrator;
+using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.Course;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +26,54 @@ namespace OnlineLearn.Core.Services
             _context = context;
         }
 
+        public int AddCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)
+        {
+            course.CreateDate = DateTime.Now;
+            course.CourseImageName = "no-photo.jpg";
+            //Image Check
+            if (imgCourse != null && imgCourse.IsImage())
+            {
+                course.CourseImageName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(imgCourse.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    imgCourse.CopyTo(stream);
+                }
+                //Resize Image
+                ImageConvertor imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                imgResizer.Image_resize(imagePath, thumbPath, 150);
+            }
+            //Upload Demo 
+            if (courseDemo != null)
+            {
+                course.DemoFileName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(courseDemo.FileName);
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                using (var stream = new FileStream(demoPath, FileMode.Create))
+                {
+                    courseDemo.CopyTo(stream);
+                }
+            }
+            _context.Add(course);
+            _context.SaveChanges();
+
+            return course.CourseId;
+        }
+
         public List<CourseGroup> GetAllGroups()
         {
             return _context.CourseGroups.ToList();
+        }
+
+        public List<ShowCourseForAdminVM> GetCoursesForAdmin()
+        {
+            return _context.Courses.Select(c => new ShowCourseForAdminVM()
+            {
+                CourseId = c.CourseId,
+                ImageName = c.CourseImageName,
+                Title = c.CourseTitle,
+                EpisodeCount = c.CourseEpisodes.Count
+            }).ToList();
         }
 
         public List<SelectListItem> GetGroupsToManageCourse()
