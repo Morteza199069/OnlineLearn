@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace OnlineLearn.Core.Services
 {
-    public class CourseService: ICourseService
+    public class CourseService : ICourseService
     {
         private readonly OnlineLearnContext _context;
 
@@ -63,6 +63,11 @@ namespace OnlineLearn.Core.Services
         public List<CourseGroup> GetAllGroups()
         {
             return _context.CourseGroups.ToList();
+        }
+
+        public Course GetCourseById(int courseId)
+        {
+            return _context.Courses.Find(courseId);
         }
 
         public List<ShowCourseForAdminVM> GetCoursesForAdmin()
@@ -122,6 +127,57 @@ namespace OnlineLearn.Core.Services
                     Text = u.User.UserName,
                     Value = u.UserId.ToString()
                 }).ToList();
+        }
+
+        public void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)
+        {
+            course.UpdateDate = DateTime.Now;
+            if (imgCourse != null && imgCourse.IsImage())
+            {
+                if(course.CourseImageName != "no-photo.jpg")
+                {
+                    string deleteimagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                    if(File.Exists(deleteimagePath))
+                    {
+                        File.Delete(deleteimagePath);
+                    }
+
+                    string deletethumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                    if (File.Exists(deletethumbPath))
+                    {
+                        File.Delete(deletethumbPath);
+                    }
+                }
+                course.CourseImageName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(imgCourse.FileName);
+                string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
+                using (var stream = new FileStream(imagePath,FileMode.Create))
+                {
+                    imgCourse.CopyTo(stream);
+                }
+                ImageConvertor imgResizer = new ImageConvertor();
+                string thumbPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/thumb", course.CourseImageName);
+                imgResizer.Image_resize(imagePath, thumbPath, 150);
+            }
+
+            if(courseDemo != null)
+            {
+                string deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demoes", course.DemoFileName);
+                if (course.DemoFileName != null)
+                {
+                    if(File.Exists(deleteDemoPath))
+                    {
+                        File.Delete(deleteDemoPath);
+                    }
+                }
+                course.DemoFileName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(courseDemo.FileName);
+                string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
+                using (var stream = new FileStream(demoPath,FileMode.Create))
+                {
+                    courseDemo.CopyTo(stream);
+                }
+            }
+            _context.Courses.Update(course);
+            _context.SaveChanges();
         }
     }
 }

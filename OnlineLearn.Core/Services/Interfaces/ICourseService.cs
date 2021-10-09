@@ -24,6 +24,8 @@ namespace OnlineLearn.Core.Services.Interfaces
         #region Courses
         List<ShowCourseForAdminVM> GetCoursesForAdmin();
         int AddCourse(Course course, IFormFile imgCourse, IFormFile courseDemo);
+        Course GetCourseById(int courseId);
+        void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo);
         #endregion
     }
 }
