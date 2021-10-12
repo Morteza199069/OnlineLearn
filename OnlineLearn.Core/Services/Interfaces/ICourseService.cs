@@ -27,5 +27,14 @@ namespace OnlineLearn.Core.Services.Interfaces
         Course GetCourseById(int courseId);
         void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo);
         #endregion
+
+        #region Episodes
+        int AddEpisode(CourseEpisode episode, IFormFile episodeFile);
+        CourseEpisode GetEpisodeById(int episodeId);
+        void EditEpisode(CourseEpisode episode, IFormFile episodeFile);
+        List<CourseEpisode> GetCourseEpisodesList(int courseId);
+        bool CheckFileExist(string fileName);
+
+        #endregion
     }
 }

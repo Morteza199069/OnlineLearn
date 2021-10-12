@@ -60,6 +60,44 @@ namespace OnlineLearn.Core.Services
             return course.CourseId;
         }
 
+        public int AddEpisode(CourseEpisode episode, IFormFile episodeFile)
+        {
+            episode.EpisodeFileName = episodeFile.FileName;
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+            using (var stream=new FileStream(filePath,FileMode.Create))
+            {
+                episodeFile.CopyTo(stream);
+            }
+
+            _context.CourseEpisodes.Add(episode);
+            _context.SaveChanges();
+            return episode.EpisodeId;
+        }
+
+        public bool CheckFileExist(string fileName)
+        {
+            string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
+            return File.Exists(path);
+        }
+
+        public void EditEpisode(CourseEpisode episode, IFormFile episodeFile)
+        {
+            if(episodeFile != null)
+            {
+                string deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                File.Delete(deleteFilePath);
+                episode.EpisodeFileName = episodeFile.FileName;
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+                using (var stream=new FileStream(filePath,FileMode.Create))
+                {
+                    episodeFile.CopyTo(stream);
+                }
+
+            }
+                _context.CourseEpisodes.Update(episode);
+                _context.SaveChanges();
+        }
+
         public List<CourseGroup> GetAllGroups()
         {
             return _context.CourseGroups.ToList();
@@ -68,6 +106,11 @@ namespace OnlineLearn.Core.Services
         public Course GetCourseById(int courseId)
         {
             return _context.Courses.Find(courseId);
+        }
+
+        public List<CourseEpisode> GetCourseEpisodesList(int courseId)
+        {
+            return _context.CourseEpisodes.Where(e => e.CourseId == courseId).ToList();
         }
 
         public List<ShowCourseForAdminVM> GetCoursesForAdmin()
@@ -79,6 +122,11 @@ namespace OnlineLearn.Core.Services
                 Title = c.CourseTitle,
                 EpisodeCount = c.CourseEpisodes.Count
             }).ToList();
+        }
+
+        public CourseEpisode GetEpisodeById(int episodeId)
+        {
+            return _context.CourseEpisodes.Find(episodeId);
         }
 
         public List<SelectListItem> GetGroupsToManageCourse()
