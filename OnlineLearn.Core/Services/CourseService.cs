@@ -113,6 +113,75 @@ namespace OnlineLearn.Core.Services
             return _context.CourseEpisodes.Where(e => e.CourseId == courseId).ToList();
         }
 
+        public List<ShowCourseListItemViewModel> GetCourses(int pageId = 1, int take = 0, string filter = "", string getType = "all", string orderByType = "date", int startPrice = 0, int endPrice = 0, List<int> selectedGroup = null)
+        {
+            IQueryable<Course> result = _context.Courses;
+
+            if(!string.IsNullOrEmpty(filter))
+            {
+                result = result.Where(c => c.CourseTitle.Contains(filter));
+            }
+
+            switch (getType)
+            {
+                case "all":
+                    break;
+                case "buy":
+                    {
+                        result = result.Where(c => c.CoursePrice != 0);
+                        break;
+                    }
+                case "free":
+                    {
+                        result = result.Where(c => c.CoursePrice == 0);
+                        break;
+                    }
+            }
+
+            switch (orderByType)
+            {
+                case "date":
+                    {
+                        result = result.OrderByDescending(c => c.CreateDate);
+                        break;
+                    }
+                case "updatedate":
+                    {
+                        result = result.OrderByDescending(c => c.UpdateDate);
+                        break;
+                    }
+            }
+
+            if(startPrice > 0)
+            {
+                result = result.Where(c => c.CoursePrice > startPrice);
+            }
+            if (endPrice > 0)
+            {
+                result = result.Where(c => c.CoursePrice < endPrice);
+            }
+
+            if(selectedGroup != null && selectedGroup.Any())
+            {
+                foreach (int groupId in selectedGroup)
+                {
+                    result = result.Where(c => c.GroupId == groupId || c.SubGroup == groupId);
+                }
+            }
+
+            if (take == 0)
+                take = 8;
+            int skip = (pageId - 1) * take;
+            return result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
+            {
+                CourseId = c.CourseId,
+                ImageName = c.CourseImageName,
+                Price = c.CoursePrice,
+                Title = c.CourseTitle,
+                CourseEpisodes=c.CourseEpisodes
+            }).Skip(skip).Take(take).ToList();
+        }
+
         public List<ShowCourseForAdminVM> GetCoursesForAdmin()
         {
             return _context.Courses.Select(c => new ShowCourseForAdminVM()

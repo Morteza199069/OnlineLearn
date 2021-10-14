@@ -1,0 +1,17 @@
+﻿@model OnlineLearn.Core.DTOs.ShowCourseListItemViewModel
+
+<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 term-col">
+    <article>
+        <a href="" class="img-layer"><img style="height:180px" src="/course/thumb/@Model.ImageName"></a>
+        <h2><a href=""> @Model.Title </a></h2>
+        <span> @((Model.Price==0)?"رایگان":Model.Price.ToString("#,0")) </span>
+        @{
+            var duration = new TimeSpan(Model.CourseEpisodes.Sum(e => e.EpisodeTime.Ticks));
+            var h = (int)duration.TotalHours;
+            var m = (int)duration.TotalMinutes;
+            var s = "00";
+        }
+        <i>@($"{h}:{m}:{s}")</i>
+    </article>
+</div>
+

@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using OnlineLearn.Core.DTOs;
+using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 
 namespace OnlineLearn.Web.Pages.Admin.Courses
 {
+    [PermissionChecker(2)]
+
     public class IndexModel : PageModel
     {
         private ICourseService _courseService;

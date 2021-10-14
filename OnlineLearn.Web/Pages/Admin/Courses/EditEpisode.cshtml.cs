@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Entities.Course;
 
 namespace OnlineLearn.Web.Pages.Admin.Courses
 {
+    [PermissionChecker(8)]
+
     public class EditEpisodeModel : PageModel
     {
         private ICourseService _courseService;

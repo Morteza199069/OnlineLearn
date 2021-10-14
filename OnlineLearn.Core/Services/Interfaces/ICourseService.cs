@@ -26,6 +26,8 @@ namespace OnlineLearn.Core.Services.Interfaces
         int AddCourse(Course course, IFormFile imgCourse, IFormFile courseDemo);
         Course GetCourseById(int courseId);
         void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo);
+        List<ShowCourseListItemViewModel> GetCourses(int pageId = 1, int take = 0, string filter = "", string getType = "all",
+            string orderByType = "date", int startPrice = 0, int endPrice = 0, List<int> selectedGroup = null);
         #endregion
 
         #region Episodes

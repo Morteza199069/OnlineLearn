@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OnlineLearn.Core.Security;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Entities.Course;
 
 namespace OnlineLearn.Web.Pages.Admin.Courses
 {
+    [PermissionChecker(4)]
+
     public class EditCourseModel : PageModel
     {
         private readonly ICourseService _courseService;

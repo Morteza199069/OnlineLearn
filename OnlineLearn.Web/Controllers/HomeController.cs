@@ -20,7 +20,10 @@ namespace OnlineLearn.Web.Controllers
             _userService = userService;
             _courseService = courseService;
         }
-        public IActionResult Index() => View();
+        public IActionResult Index()
+        {
+            return View(_courseService.GetCourses());
+        }
 
         [Route("onlinePayment/{id}")]
         public IActionResult onlinePayment(int id)
