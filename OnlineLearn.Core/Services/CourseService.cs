@@ -64,7 +64,7 @@ namespace OnlineLearn.Core.Services
         {
             episode.EpisodeFileName = episodeFile.FileName;
             string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
-            using (var stream=new FileStream(filePath,FileMode.Create))
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 episodeFile.CopyTo(stream);
             }
@@ -82,20 +82,20 @@ namespace OnlineLearn.Core.Services
 
         public void EditEpisode(CourseEpisode episode, IFormFile episodeFile)
         {
-            if(episodeFile != null)
+            if (episodeFile != null)
             {
                 string deleteFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
                 File.Delete(deleteFilePath);
                 episode.EpisodeFileName = episodeFile.FileName;
                 string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
-                using (var stream=new FileStream(filePath,FileMode.Create))
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     episodeFile.CopyTo(stream);
                 }
 
             }
-                _context.CourseEpisodes.Update(episode);
-                _context.SaveChanges();
+            _context.CourseEpisodes.Update(episode);
+            _context.SaveChanges();
         }
 
         public List<CourseGroup> GetAllGroups()
@@ -108,18 +108,24 @@ namespace OnlineLearn.Core.Services
             return _context.Courses.Find(courseId);
         }
 
+        public Course GetCourseDetails(int courseId)
+        {
+            return _context.Courses.Include(c => c.CourseEpisodes).Include(c => c.CourseStatus)
+                .Include(c => c.CourseLevel).Include(c => c.User).FirstOrDefault(c => c.CourseId == courseId);
+        }
+
         public List<CourseEpisode> GetCourseEpisodesList(int courseId)
         {
             return _context.CourseEpisodes.Where(e => e.CourseId == courseId).ToList();
         }
 
-        public List<ShowCourseListItemViewModel> GetCourses(int pageId = 1, int take = 0, string filter = "", string getType = "all", string orderByType = "date", int startPrice = 0, int endPrice = 0, List<int> selectedGroup = null)
+        public Tuple<List<ShowCourseListItemViewModel>, int> GetCourses(int pageId = 1, int take = 0, string filter = "", string getType = "all", string orderByType = "date", int startPrice = 0, int endPrice = 0, List<int> selectedGroups = null)
         {
             IQueryable<Course> result = _context.Courses;
 
-            if(!string.IsNullOrEmpty(filter))
+            if (!string.IsNullOrEmpty(filter))
             {
-                result = result.Where(c => c.CourseTitle.Contains(filter));
+                result = result.Where(c => c.CourseTitle.Contains(filter) || c.Tags.Contains(filter));
             }
 
             switch (getType)
@@ -152,7 +158,7 @@ namespace OnlineLearn.Core.Services
                     }
             }
 
-            if(startPrice > 0)
+            if (startPrice > 0)
             {
                 result = result.Where(c => c.CoursePrice > startPrice);
             }
@@ -161,9 +167,9 @@ namespace OnlineLearn.Core.Services
                 result = result.Where(c => c.CoursePrice < endPrice);
             }
 
-            if(selectedGroup != null && selectedGroup.Any())
+            if (selectedGroups != null && selectedGroups.Any())
             {
-                foreach (int groupId in selectedGroup)
+                foreach (int groupId in selectedGroups)
                 {
                     result = result.Where(c => c.GroupId == groupId || c.SubGroup == groupId);
                 }
@@ -172,14 +178,23 @@ namespace OnlineLearn.Core.Services
             if (take == 0)
                 take = 8;
             int skip = (pageId - 1) * take;
-            return result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
+            var pageCount = result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
+            {
+                CourseId = c.CourseId,
+                ImageName = c.CourseImageName,
+                Price = c.CoursePrice,
+                Title = c.CourseTitle
+            }).Count() / take;
+            var query = result.Include(c => c.CourseEpisodes).Select(c => new ShowCourseListItemViewModel()
             {
                 CourseId = c.CourseId,
                 ImageName = c.CourseImageName,
                 Price = c.CoursePrice,
                 Title = c.CourseTitle,
-                CourseEpisodes=c.CourseEpisodes
+                CourseEpisodes = c.CourseEpisodes
             }).Skip(skip).Take(take).ToList();
+
+            return Tuple.Create(query, pageCount);
         }
 
         public List<ShowCourseForAdminVM> GetCoursesForAdmin()
@@ -251,10 +266,10 @@ namespace OnlineLearn.Core.Services
             course.UpdateDate = DateTime.Now;
             if (imgCourse != null && imgCourse.IsImage())
             {
-                if(course.CourseImageName != "no-photo.jpg")
+                if (course.CourseImageName != "no-photo.jpg")
                 {
                     string deleteimagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
-                    if(File.Exists(deleteimagePath))
+                    if (File.Exists(deleteimagePath))
                     {
                         File.Delete(deleteimagePath);
                     }
@@ -267,7 +282,7 @@ namespace OnlineLearn.Core.Services
                 }
                 course.CourseImageName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(imgCourse.FileName);
                 string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/image", course.CourseImageName);
-                using (var stream = new FileStream(imagePath,FileMode.Create))
+                using (var stream = new FileStream(imagePath, FileMode.Create))
                 {
                     imgCourse.CopyTo(stream);
                 }
@@ -276,19 +291,19 @@ namespace OnlineLearn.Core.Services
                 imgResizer.Image_resize(imagePath, thumbPath, 150);
             }
 
-            if(courseDemo != null)
+            if (courseDemo != null)
             {
                 string deleteDemoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demoes", course.DemoFileName);
                 if (course.DemoFileName != null)
                 {
-                    if(File.Exists(deleteDemoPath))
+                    if (File.Exists(deleteDemoPath))
                     {
                         File.Delete(deleteDemoPath);
                     }
                 }
                 course.DemoFileName = NameGenerator.GenerateUniqueCode() + Path.GetExtension(courseDemo.FileName);
                 string demoPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/course/demos", course.DemoFileName);
-                using (var stream = new FileStream(demoPath,FileMode.Create))
+                using (var stream = new FileStream(demoPath, FileMode.Create))
                 {
                     courseDemo.CopyTo(stream);
                 }

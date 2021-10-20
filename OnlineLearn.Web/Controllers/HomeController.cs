@@ -22,7 +22,7 @@ namespace OnlineLearn.Web.Controllers
         }
         public IActionResult Index()
         {
-            return View(_courseService.GetCourses());
+            return View(_courseService.GetCourses().Item1);
         }
 
         [Route("onlinePayment/{id}")]
