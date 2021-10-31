@@ -1,6 +1,5 @@
-﻿@model OnlineLearn.DataLayer.Entities.Course.Course
-@using OnlineLearn.Core.Convertors
-
+﻿@using OnlineLearn.Core.Convertors
+@model OnlineLearn.DataLayer.Entities.Course.Course
 @{
     ViewData["Title"] = Model.CourseTitle;
 }
@@ -192,7 +191,7 @@
 
                     @if (Model.CoursePrice != 0)
                     {
-                        <a href=""> شرکت در دوره : @Model.CoursePrice.ToString("#,0") تومان </a>
+                        <a href="/Course/BuyCourse/@Model.CourseId"> شرکت در دوره : @Model.CoursePrice.ToString("#,0") تومان </a>
                     }
                 </div>
 
@@ -230,9 +229,9 @@
                 @if (Model.Tags != null)
                 {
                     <div class="tags-layer">
-                        @foreach (string tag in Model.Tags.Split('-',StringSplitOptions.RemoveEmptyEntries))
+                        @foreach (string tag in Model.Tags.Split('-', StringSplitOptions.RemoveEmptyEntries))
                         {
-                            <a href="/Course?filter=@tag">@tag</a>
+                            <a href="/Course?filter=@tag"> @tag </a>
                         }
                     </div>
                 }
@@ -241,6 +240,4 @@
         </div>
     </section>
 </div>
-
-
 

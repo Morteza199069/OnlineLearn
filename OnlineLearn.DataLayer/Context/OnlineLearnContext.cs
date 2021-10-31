@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OnlineLearn.DataLayer.Entities.Course;
+using OnlineLearn.DataLayer.Entities.Order;
 using OnlineLearn.DataLayer.Entities.Permissions;
 using OnlineLearn.DataLayer.Entities.User;
 using OnlineLearn.DataLayer.Entities.Wallet;
@@ -42,10 +43,23 @@ namespace OnlineLearn.DataLayer.Context
         public DbSet<CourseStatus> CourseStatuses { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
+        public DbSet<UserCourse> UserCourses { get; set; }
+        #endregion
+
+        #region Order
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var cascadeFKs = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(t => t.GetForeignKeys())
+                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            foreach (var fk in cascadeFKs)
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+
             modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDelete);
             modelBuilder.Entity<Role>().HasQueryFilter(r => !r.IsDelete);
             modelBuilder.Entity<CourseGroup>().HasQueryFilter(g => !g.IsDelete);

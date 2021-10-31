@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineLearn.DataLayer.Context;
 
 namespace OnlineLearn.DataLayer.Migrations
 {
     [DbContext(typeof(OnlineLearnContext))]
-    partial class OnlineLearnContextModelSnapshot : ModelSnapshot
+    [Migration("20211021091807_Mig_OrderAndOrderDetail")]
+    partial class Mig_OrderAndOrderDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,28 +176,6 @@ namespace OnlineLearn.DataLayer.Migrations
                     b.HasKey("StatusId");
 
                     b.ToTable("CourseStatuses");
-                });
-
-            modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.UserCourse", b =>
-                {
-                    b.Property<int>("UC_Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UC_Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCourses");
                 });
 
             modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Order.Order", b =>
@@ -494,25 +474,6 @@ namespace OnlineLearn.DataLayer.Migrations
                         .HasForeignKey("ParentId");
                 });
 
-            modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.UserCourse", b =>
-                {
-                    b.HasOne("OnlineLearn.DataLayer.Entities.Course.Course", "Course")
-                        .WithMany("UserCourses")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("OnlineLearn.DataLayer.Entities.User.User", "User")
-                        .WithMany("UserCourses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Order.Order", b =>
                 {
                     b.HasOne("OnlineLearn.DataLayer.Entities.User.User", "User")
@@ -610,8 +571,6 @@ namespace OnlineLearn.DataLayer.Migrations
                     b.Navigation("CourseEpisodes");
 
                     b.Navigation("OrderDetails");
-
-                    b.Navigation("UserCourses");
                 });
 
             modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.CourseGroup", b =>
@@ -653,8 +612,6 @@ namespace OnlineLearn.DataLayer.Migrations
                     b.Navigation("Courses");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("UserCourses");
 
                     b.Navigation("UserRoles");
 

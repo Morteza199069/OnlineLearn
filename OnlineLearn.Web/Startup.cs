@@ -63,6 +63,7 @@ namespace OnlineLearn.Web
             services.AddTransient<IViewRenderService, RenderViewToString>();
             services.AddTransient<IPermissionService, PermissionService>();
             services.AddTransient<ICourseService, CourseService>();
+            services.AddTransient<IOrderService, OrderService>();
             #endregion
 
         }

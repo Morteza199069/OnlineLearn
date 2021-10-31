@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineLearn.DataLayer.Entities.Course;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -54,6 +55,8 @@ namespace OnlineLearn.DataLayer.Entities.User
         public virtual List<UserRole> UserRoles { get; set; }
         public List<Wallet.Wallet> Wallets { get; set; }
         public List<Course.Course> Courses { get; set; }
+        public List<Order.Order> Orders { get; set; }
+        public List<UserCourse> UserCourses { get; set; }
         #endregion
     }
 }

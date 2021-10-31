@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineLearn.DataLayer.Entities.Order;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -72,6 +73,9 @@ namespace OnlineLearn.DataLayer.Entities.Course
         public CourseStatus CourseStatus { get; set; }
 
         public List<CourseEpisode> CourseEpisodes { get; set; }
+
+        public List<OrderDetail> OrderDetails { get; set; }
+        public List<UserCourse> UserCourses { get; set; }
         #endregion
     }
 }
