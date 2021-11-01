@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using OnlineLearn.Core.DTOs.Order;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.Course;
@@ -117,11 +118,28 @@ namespace OnlineLearn.Core.Services
             return false;
         }
 
+        public Order GetOrderById(int orderId)
+        {
+            return _context.Orders.Find(orderId);
+        }
+
         public Order GetOrderForUserPanel(string userName, int orderId)
         {
             int userId = _userService.GetUserIdByUserName(userName);
             return _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Course)
                 .FirstOrDefault(o => o.UserId == userId && o.OrderId == orderId);
+        }
+
+        public List<Order> GetUserOrders(string userName)
+        {
+            int userId = _userService.GetUserIdByUserName(userName);
+            return _context.Orders.Where(o => o.UserId == userId).ToList();
+        }
+
+        public void UpdateOrder(Order order)
+        {
+            _context.Orders.Update(order);
+            _context.SaveChanges();
         }
 
         public void UpdatePriceOrder(int orderId)
@@ -132,5 +150,37 @@ namespace OnlineLearn.Core.Services
             _context.SaveChanges();
         }
 
+        public DiscountUseType UseDiscount(int orderId, string code)
+        {
+            var discount = _context.Discounts.SingleOrDefault(d => d.DiscountCode == code);
+            if (discount == null)
+                return DiscountUseType.NotFound;
+
+            if (discount.StartDate != null && discount.StartDate < DateTime.Now)
+                return DiscountUseType.ExpiredDate;
+
+            if (discount.EndDate != null && discount.EndDate >= DateTime.Now)
+                return DiscountUseType.ExpiredDate;
+
+            if (discount.UsableCount != null && discount.UsableCount < 1)
+                return DiscountUseType.Finished;
+
+            var order = GetOrderById(orderId);
+
+            int percent = (order.OrderSum * discount.DiscountPercent) / 100;
+            order.OrderSum = order.OrderSum - percent;
+
+            UpdateOrder(order);
+
+            if (discount.UsableCount != null)
+            {
+                discount.UsableCount -= 1;
+            }
+
+            _context.Discounts.Update(discount);
+            _context.SaveChanges();
+
+            return DiscountUseType.Success;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OnlineLearn.Core.DTOs.Order;
 using OnlineLearn.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            return View(_orderService.GetUserOrders(User.Identity.Name));
         }
 
         public IActionResult ShowOrder(int id, bool Finalized = false)
@@ -35,14 +36,20 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
             return View(order);
         }
 
-        public IActionResult FinalzeOrder(int id)
+        public IActionResult FinalizeOrder(int id)
         {
             if (_orderService.FinalOrder(User.Identity.Name, id))
             {
-                return Redirect("/UserPanel/MyOrders/" + id + "?Finalized=true");
+                return Redirect("/UserPanel/MyOrders/ShowOrder/" + id + "?Finalized=true");
             }
 
             return BadRequest();
+        }
+
+        public IActionResult UseDiscount(int orderId,string code)
+        {
+            DiscountUseType type = _orderService.UseDiscount(orderId, code);
+            return Redirect("/UserPanel/MyOrders/ShowOrder/" + orderId + "?type=" + type.ToString());
         }
     }
 }

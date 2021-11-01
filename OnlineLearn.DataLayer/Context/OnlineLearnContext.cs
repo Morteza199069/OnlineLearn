@@ -49,6 +49,7 @@ namespace OnlineLearn.DataLayer.Context
         #region Order
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
