@@ -8,7 +8,7 @@ namespace OnlineLearn.Core.DTOs.Order
 {
     public enum DiscountUseType
     {
-        Success, ExpiredDate, NotFound, Finished
+        Success, ExpiredDate, NotFound, Finished, Used
 
     }
 }

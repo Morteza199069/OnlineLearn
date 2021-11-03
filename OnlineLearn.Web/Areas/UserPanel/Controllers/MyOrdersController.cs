@@ -24,14 +24,15 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
             return View(_orderService.GetUserOrders(User.Identity.Name));
         }
 
-        public IActionResult ShowOrder(int id, bool Finalized = false)
+        public IActionResult ShowOrder(int id, bool Finalized = false, string type = "")
         {
             var order = _orderService.GetOrderForUserPanel(User.Identity.Name, id);
-            if(order==null)
+            if (order == null)
             {
                 return NotFound();
             }
 
+            ViewBag.DiscountType = type;
             ViewBag.Finalized = Finalized;
             return View(order);
         }
@@ -46,7 +47,7 @@ namespace OnlineLearn.Web.Areas.UserPanel.Controllers
             return BadRequest();
         }
 
-        public IActionResult UseDiscount(int orderId,string code)
+        public IActionResult UseDiscount(int orderId, string code)
         {
             DiscountUseType type = _orderService.UseDiscount(orderId, code);
             return Redirect("/UserPanel/MyOrders/ShowOrder/" + orderId + "?type=" + type.ToString());

@@ -4,6 +4,7 @@ using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Context;
 using OnlineLearn.DataLayer.Entities.Course;
 using OnlineLearn.DataLayer.Entities.Order;
+using OnlineLearn.DataLayer.Entities.User;
 using OnlineLearn.DataLayer.Entities.Wallet;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,12 @@ namespace OnlineLearn.Core.Services
         {
             _context = context;
             _userService = userService;
+        }
+
+        public void AddDiscount(Discount discount)
+        {
+            _context.Discounts.Add(discount);
+            _context.SaveChanges();
         }
 
         public int AddOrder(string username, int courseId)
@@ -118,6 +125,16 @@ namespace OnlineLearn.Core.Services
             return false;
         }
 
+        public List<Discount> GetAllDiscounts()
+        {
+            return _context.Discounts.ToList();
+        }
+
+        public Discount GetDiscountById(int discountId)
+        {
+            return _context.Discounts.Find(discountId);
+        }
+
         public Order GetOrderById(int orderId)
         {
             return _context.Orders.Find(orderId);
@@ -134,6 +151,12 @@ namespace OnlineLearn.Core.Services
         {
             int userId = _userService.GetUserIdByUserName(userName);
             return _context.Orders.Where(o => o.UserId == userId).ToList();
+        }
+
+        public void UpdateDiscount(Discount discount)
+        {
+            _context.Discounts.Update(discount);
+            _context.SaveChanges();
         }
 
         public void UpdateOrder(Order order)
@@ -167,10 +190,19 @@ namespace OnlineLearn.Core.Services
 
             var order = GetOrderById(orderId);
 
+            if (_context.UserDiscountCodes.Any(d => d.UserId == order.UserId && d.DiscountId == discount.DiscountId))
+                return DiscountUseType.Used;
+
             int percent = (order.OrderSum * discount.DiscountPercent) / 100;
             order.OrderSum = order.OrderSum - percent;
 
             UpdateOrder(order);
+
+            _context.UserDiscountCodes.Add(new UserDiscountCode()
+            {
+                UserId = order.UserId,
+                DiscountId = discount.DiscountId
+            });
 
             if (discount.UsableCount != null)
             {

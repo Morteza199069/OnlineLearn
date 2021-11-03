@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OnlineLearn.DataLayer.Entities.User;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,5 +24,8 @@ namespace OnlineLearn.DataLayer.Entities.Order
 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+
+        public List<UserDiscountCode> UserDiscountCodes { get; set; }
     }
 }
