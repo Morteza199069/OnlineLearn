@@ -111,7 +111,8 @@ namespace OnlineLearn.Core.Services
         public Course GetCourseDetails(int courseId)
         {
             return _context.Courses.Include(c => c.CourseEpisodes).Include(c => c.CourseStatus)
-                .Include(c => c.CourseLevel).Include(c => c.User).FirstOrDefault(c => c.CourseId == courseId);
+                .Include(c => c.CourseLevel).Include(c => c.User).Include(c=>c.UserCourses)
+                .FirstOrDefault(c => c.CourseId == courseId);
         }
 
         public List<CourseEpisode> GetCourseEpisodesList(int courseId)

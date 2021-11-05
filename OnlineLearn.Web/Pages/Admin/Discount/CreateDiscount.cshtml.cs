@@ -54,5 +54,12 @@ namespace OnlineLearn.Web.Pages.Admin.Discount
             _orderService.AddDiscount(Discount);
             return RedirectToPage("Index");
         }
+
+        //admin/discount/creatediscount?handler=checkcode
+        //admin/discount/creatediscount/checkcode
+        public IActionResult OnGetCheckCode(string code)
+        {
+            return Content(_orderService.IsExistCode(code).ToString());
+        }
     }
 }

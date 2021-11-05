@@ -153,6 +153,17 @@ namespace OnlineLearn.Core.Services
             return _context.Orders.Where(o => o.UserId == userId).ToList();
         }
 
+        public bool IsExistCode(string code)
+        {
+            return _context.Discounts.Any(c => c.DiscountCode == code);
+        }
+
+        public bool IsUserInCourse(string userName, int courseId)
+        {
+            int userId = _userService.GetUserIdByUserName(userName);
+            return _context.UserCourses.Any(u => u.UserId == userId && u.CourseId == courseId);
+        }
+
         public void UpdateDiscount(Discount discount)
         {
             _context.Discounts.Update(discount);

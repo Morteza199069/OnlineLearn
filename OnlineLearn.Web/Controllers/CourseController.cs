@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OnlineLearn.Core.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,6 +45,29 @@ namespace OnlineLearn.Web.Controllers
         {
             int orderId = _orderService.AddOrder(User.Identity.Name, id);
             return Redirect("/UserPanel/MyOrders/ShowOrder/" + orderId);
+        }
+
+        [Route("FileDownload/{episodeId}")]
+        public IActionResult FileDownload(int episodeId)
+        {
+            var episode = _courseService.GetEpisodeById(episodeId);
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+            string fileName = episode.EpisodeFileName;
+            if(episode.IsFree)
+            {
+                byte[] file = System.IO.File.ReadAllBytes(filePath);
+                return File(file, "application/force-download", fileName);
+            }
+            if(User.Identity.IsAuthenticated)
+            {
+                if(_orderService.IsUserInCourse(User.Identity.Name,episodeId))
+                {
+                    byte[] file = System.IO.File.ReadAllBytes(filePath);
+                    return File(file, "application/force-download", fileName);
+                }
+            }
+
+            return Forbid();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{handler?}"
 @model OnlineLearn.Web.Pages.Admin.Discount.CreateDiscountModel
 @{
     ViewData["Title"] = "CreateDiscount";
@@ -19,6 +19,9 @@
         <div class="form-group">
             <label>کد تخفیف </label>
             <input type="text" asp-for="Discount.DiscountCode" class="form-control">
+            <div id="alertCode" class="alert alert-danger" style="display:none">
+                <p class="text-muted">کد وارد شده معتبر نمی باشد</p>
+            </div>
         </div>
         <div class="form-group">
             <label>درصد کد تخفیف </label>
@@ -43,6 +46,22 @@
 
 @section Scripts
 {
+
+    <script>
+        $("#Discount_DiscountCode").blur(function () {
+            $.ajax({
+                type: "get",
+                url: "/Admin/Discount/CreateDiscount/CheckCode?code=" + $("#Discount_DiscountCode").val()
+            }).done(function (res) {
+                if (res == "True") {
+                    $("#alertCode").show();
+                } else {
+                    $("#alertCode").hide();
+                }
+            });
+        });
+
+    </script>
     <link href="https://cdn.kendostatic.com/2013.2.918/styles/kendo.common.min.css" rel="stylesheet" />
     <link href="https://cdn.kendostatic.com/2013.2.918/styles/kendo.default.min.css" rel="stylesheet" />
 
