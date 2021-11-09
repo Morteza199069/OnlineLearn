@@ -255,6 +255,22 @@ namespace OnlineLearn.Core.Services
             }).ToList();
         }
 
+        public List<ShowCourseListItemViewModel> GetPopularCourse()
+        {
+            return _context.Courses.Include(c => c.OrderDetails)
+                .Where(c => c.OrderDetails.Any())
+                .OrderByDescending(c => c.OrderDetails.Count)
+                .Take(8)
+                .Select(c => new ShowCourseListItemViewModel()
+                {
+                    CourseId = c.CourseId,
+                    ImageName = c.CourseImageName,
+                    Price = c.CoursePrice,
+                    Title = c.CourseTitle,
+                    CourseEpisodes=c.CourseEpisodes
+                }).ToList();
+        }
+
         public List<SelectListItem> GetStatus()
         {
             return _context.CourseStatuses.Select(s => new SelectListItem()

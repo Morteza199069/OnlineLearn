@@ -84,7 +84,7 @@ namespace OnlineLearn.Web.Controllers
 
         [HttpPost]
         [Route("Login")]
-        public IActionResult Login(LoginVM login)
+        public IActionResult Login(LoginVM login, string ReturnUrl = "/")
         {
             if (!ModelState.IsValid)
             {
@@ -109,6 +109,10 @@ namespace OnlineLearn.Web.Controllers
                     HttpContext.SignInAsync(principal, properties);
 
                     ViewBag.IsSuccess = true;
+                    if (ReturnUrl != "/")
+                    {
+                        return Redirect(ReturnUrl);
+                    }
                     return View();
                 }
                 else
@@ -153,7 +157,7 @@ namespace OnlineLearn.Web.Controllers
                 return View(forgot);
             string fixedEmail = FixedText.FixEmail(forgot.Email);
             User user = _userService.GetUserByEmail(fixedEmail);
-            if(user == null)
+            if (user == null)
             {
                 ModelState.AddModelError("Email", "کاربری یافت نشد");
                 return View(forgot);

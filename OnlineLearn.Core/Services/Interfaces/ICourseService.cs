@@ -29,6 +29,7 @@ namespace OnlineLearn.Core.Services.Interfaces
         Tuple<List<ShowCourseListItemViewModel>,int> GetCourses(int pageId = 1, int take = 0, string filter = "", string getType = "all",
             string orderByType = "date", int startPrice = 0, int endPrice = 0, List<int> selectedGroups = null);
         Course GetCourseDetails(int courseId);
+        List<ShowCourseListItemViewModel> GetPopularCourse();
         #endregion
 
         #region Episodes

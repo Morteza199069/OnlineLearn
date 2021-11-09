@@ -15,13 +15,14 @@ namespace OnlineLearn.Web.Controllers
         private readonly IUserService _userService;
         private readonly ICourseService _courseService;
 
-        public HomeController(IUserService userService,ICourseService courseService)
+        public HomeController(IUserService userService, ICourseService courseService)
         {
             _userService = userService;
             _courseService = courseService;
         }
         public IActionResult Index()
         {
+            ViewBag.PopularCourse = _courseService.GetPopularCourse();
             return View(_courseService.GetCourses().Item1);
         }
 

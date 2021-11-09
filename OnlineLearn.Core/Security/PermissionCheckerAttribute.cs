@@ -28,7 +28,7 @@ namespace OnlineLearn.Core.Security
                 string username = context.HttpContext.User.Identity.Name;
                 if (!_permissionService.CheckPermission(_permissionId, username))
                 {
-                    context.Result = new RedirectResult("/Login");
+                    context.Result = new RedirectResult("/Login?"+context.HttpContext.Request.Path);
                 }
             }
             else
