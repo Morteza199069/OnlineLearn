@@ -39,5 +39,10 @@ namespace OnlineLearn.Core.Services.Interfaces
         bool CheckFileExist(string fileName);
 
         #endregion
+
+        #region Comments
+        void AddComment(CourseComment comment);
+        Tuple<List<CourseComment>, int> GetCourseComment(int courseId, int pageId= 1);
+        #endregion
     }
 }

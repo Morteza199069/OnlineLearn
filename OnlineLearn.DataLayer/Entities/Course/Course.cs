@@ -76,6 +76,7 @@ namespace OnlineLearn.DataLayer.Entities.Course
 
         public List<OrderDetail> OrderDetails { get; set; }
         public List<UserCourse> UserCourses { get; set; }
+        public List<CourseComment> CourseComments { get; set; }
         #endregion
     }
 }

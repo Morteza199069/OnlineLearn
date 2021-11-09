@@ -26,6 +26,12 @@ namespace OnlineLearn.Core.Services
             _context = context;
         }
 
+        public void AddComment(CourseComment comment)
+        {
+            _context.CourseComments.Add(comment);
+            _context.SaveChanges();
+        }
+
         public int AddCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)
         {
             course.CreateDate = DateTime.Now;
@@ -108,10 +114,26 @@ namespace OnlineLearn.Core.Services
             return _context.Courses.Find(courseId);
         }
 
+        public Tuple<List<CourseComment>, int> GetCourseComment(int courseId, int pageId = 1)
+        {
+            int take = 5;
+            int skip = (pageId - 1) * take;
+            int pageCount = _context.CourseComments.Where(c => !c.IsDelete && c.CourseId == courseId).Count() / take;
+
+            if ((pageCount % 2) != 0)
+            {
+                pageCount += 1;
+            }
+
+            return Tuple.Create(
+                _context.CourseComments.Include(c => c.User).Where(c => !c.IsDelete && c.CourseId == courseId).Skip(skip).Take(take)
+                    .OrderByDescending(c => c.CreateDate).ToList(), pageCount);
+        }
+
         public Course GetCourseDetails(int courseId)
         {
             return _context.Courses.Include(c => c.CourseEpisodes).Include(c => c.CourseStatus)
-                .Include(c => c.CourseLevel).Include(c => c.User).Include(c=>c.UserCourses)
+                .Include(c => c.CourseLevel).Include(c => c.User).Include(c => c.UserCourses)
                 .FirstOrDefault(c => c.CourseId == courseId);
         }
 
