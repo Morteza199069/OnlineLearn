@@ -80,6 +80,12 @@ namespace OnlineLearn.Core.Services
             return episode.EpisodeId;
         }
 
+        public void AddGroup(CourseGroup group)
+        {
+            _context.CourseGroups.Add(group);
+            _context.SaveChanges();
+        }
+
         public bool CheckFileExist(string fileName)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
@@ -106,7 +112,12 @@ namespace OnlineLearn.Core.Services
 
         public List<CourseGroup> GetAllGroups()
         {
-            return _context.CourseGroups.ToList();
+            return _context.CourseGroups.Include(c=>c.CourseGroups).ToList();
+        }
+
+        public CourseGroup GetById(int groupId)
+        {
+            return _context.CourseGroups.Find(groupId);
         }
 
         public Course GetCourseById(int courseId)
@@ -348,6 +359,12 @@ namespace OnlineLearn.Core.Services
                 }
             }
             _context.Courses.Update(course);
+            _context.SaveChanges();
+        }
+
+        public void UpdateGroup(CourseGroup group)
+        {
+            _context.CourseGroups.Update(group);
             _context.SaveChanges();
         }
     }

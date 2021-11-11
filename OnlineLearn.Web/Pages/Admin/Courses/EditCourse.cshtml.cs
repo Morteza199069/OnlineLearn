@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,8 +31,18 @@ namespace OnlineLearn.Web.Pages.Admin.Courses
             var groups = _courseService.GetGroupsToManageCourse();
             ViewData["Groups"] = new SelectList(groups, "Value", "Text", Course.GroupId);
 
-            var subGroups = _courseService.GetSubGroupsToManageCourse(Course.GroupId);
-            ViewData["SubGroups"] = new SelectList(subGroups, "Value", "Text", Course.SubGroup ?? 0);
+            List<SelectListItem> subGroups = new List<SelectListItem>()
+            {
+                new SelectListItem(){Text="انتخاب کنید", Value=""}
+            };
+            subGroups.AddRange(_courseService.GetSubGroupsToManageCourse(Course.GroupId));
+            string selectedSubGroup = null;
+            if (Course.SubGroup != null)
+            {
+                selectedSubGroup = Course.SubGroup.ToString();
+            }
+
+            ViewData["SubGroups"] = new SelectList(subGroups, "Value", "Text", selectedSubGroup);
 
             var teachers = _courseService.GetTeachers();
             ViewData["Teachers"] = new SelectList(teachers, "Value", "Text", Course.TeacherId);
