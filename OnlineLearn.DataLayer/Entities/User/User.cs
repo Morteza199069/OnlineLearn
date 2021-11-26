@@ -59,6 +59,7 @@ namespace OnlineLearn.DataLayer.Entities.User
         public List<UserCourse> UserCourses { get; set; }
         public List<UserDiscountCode> UserDiscountCodes { get; set; }
         public List<CourseComment> CourseComments { get; set; }
+        public List<CourseVote> CourseVotes { get; set; }
         #endregion
     }
 }

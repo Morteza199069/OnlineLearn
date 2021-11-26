@@ -48,5 +48,11 @@ namespace OnlineLearn.Core.Services.Interfaces
         void AddComment(CourseComment comment);
         Tuple<List<CourseComment>, int> GetCourseComment(int courseId, int pageId= 1);
         #endregion
+
+        #region CourseVote
+        void AddVote(int userId, int courseId, bool vote);
+        Tuple<int, int> GetCourseVotes(int courseId);
+        bool IsFree(int courseId);
+        #endregion
     }
 }

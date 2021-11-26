@@ -50,22 +50,24 @@ namespace OnlineLearn.Web.Controllers
             return Redirect("/UserPanel/MyOrders/ShowOrder/" + orderId);
         }
 
-        [Route("FileDownload/{episodeId}")]
-        public IActionResult FileDownload(int episodeId)
+        [Route("DownloadFile/{episodeId}")]
+        public IActionResult DownloadFile(int episodeId)
         {
             var episode = _courseService.GetEpisodeById(episodeId);
-            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", episode.EpisodeFileName);
+            string filepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles",
+                episode.EpisodeFileName);
             string fileName = episode.EpisodeFileName;
-            if(episode.IsFree)
+            if (episode.IsFree)
             {
-                byte[] file = System.IO.File.ReadAllBytes(filePath);
+                byte[] file = System.IO.File.ReadAllBytes(filepath);
                 return File(file, "application/force-download", fileName);
             }
-            if(User.Identity.IsAuthenticated)
+
+            if (User.Identity.IsAuthenticated)
             {
-                if(_orderService.IsUserInCourse(User.Identity.Name,episodeId))
+                if (_orderService.IsUserInCourse(User.Identity.Name, episode.CourseId))
                 {
-                    byte[] file = System.IO.File.ReadAllBytes(filePath);
+                    byte[] file = System.IO.File.ReadAllBytes(filepath);
                     return File(file, "application/force-download", fileName);
                 }
             }
@@ -90,6 +92,22 @@ namespace OnlineLearn.Web.Controllers
             return View(_courseService.GetCourseComment(id, pageId));
         }
 
+        public IActionResult CourseVote(int id)
+        {
+            if (!_courseService.IsFree(id))
+            {
+                if (!_orderService.IsUserInCourse(User.Identity.Name, id))
+                {
+                    ViewBag.NotAccess = true;
+                }
+            }
+            return PartialView(_courseService.GetCourseVotes(id));
+        }
 
+        public IActionResult AddVote(int id, bool vote)
+        {
+            _courseService.AddVote(_userService.GetUserIdByUserName(User.Identity.Name), id, vote);
+            return PartialView("CourseVote", _courseService.GetCourseVotes(id));
+        }
     }
 }

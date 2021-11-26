@@ -86,6 +86,29 @@ namespace OnlineLearn.Core.Services
             _context.SaveChanges();
         }
 
+        public void AddVote(int userId, int courseId, bool vote)
+        {
+            var userVote = _context.CourseVotes.FirstOrDefault(c => c.UserId == userId && c.CourseId == courseId);
+
+            if (userVote != null)
+            {
+                userVote.Vote = vote;
+            }
+            else
+            {
+                userVote = new CourseVote()
+                {
+                    UserId = userId,
+                    CourseId = courseId,
+                    Vote = vote
+                };
+
+                _context.Add(userVote);
+            }
+
+            _context.SaveChanges();
+        }
+
         public bool CheckFileExist(string fileName)
         {
             string path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", fileName);
@@ -112,7 +135,7 @@ namespace OnlineLearn.Core.Services
 
         public List<CourseGroup> GetAllGroups()
         {
-            return _context.CourseGroups.Include(c=>c.CourseGroups).ToList();
+            return _context.CourseGroups.Include(c => c.CourseGroups).ToList();
         }
 
         public CourseGroup GetById(int groupId)
@@ -242,6 +265,13 @@ namespace OnlineLearn.Core.Services
             }).ToList();
         }
 
+        public Tuple<int, int> GetCourseVotes(int courseId)
+        {
+            var votes = _context.CourseVotes.Where(c => c.CourseId == courseId).Select(c => c.Vote).ToList();
+
+            return Tuple.Create(votes.Count(c => c), votes.Count(c => !c));
+        }
+
         public CourseEpisode GetEpisodeById(int episodeId)
         {
             return _context.CourseEpisodes.Find(episodeId);
@@ -278,7 +308,7 @@ namespace OnlineLearn.Core.Services
                     ImageName = c.CourseImageName,
                     Price = c.CoursePrice,
                     Title = c.CourseTitle,
-                    CourseEpisodes=c.CourseEpisodes
+                    CourseEpisodes = c.CourseEpisodes
                 }).ToList();
         }
 
@@ -309,6 +339,11 @@ namespace OnlineLearn.Core.Services
                     Text = u.User.UserName,
                     Value = u.UserId.ToString()
                 }).ToList();
+        }
+
+        public bool IsFree(int courseId)
+        {
+            return _context.Courses.Where(c => c.CourseId == courseId).Select(c => c.CoursePrice).First() == 0;
         }
 
         public void UpdateCourse(Course course, IFormFile imgCourse, IFormFile courseDemo)

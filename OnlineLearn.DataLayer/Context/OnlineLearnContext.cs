@@ -46,6 +46,7 @@ namespace OnlineLearn.DataLayer.Context
         public DbSet<CourseEpisode> CourseEpisodes { get; set; }
         public DbSet<UserCourse> UserCourses { get; set; }
         public DbSet<CourseComment> CourseComments { get; set; }
+        public DbSet<CourseVote> CourseVotes { get; set; }
         #endregion
 
         #region Order

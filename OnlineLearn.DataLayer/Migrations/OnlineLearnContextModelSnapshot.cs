@@ -211,6 +211,34 @@ namespace OnlineLearn.DataLayer.Migrations
                     b.ToTable("CourseStatuses");
                 });
 
+            modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.CourseVote", b =>
+                {
+                    b.Property<int>("VoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Vote")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("VoteDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("VoteId");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("CourseVotes");
+                });
+
             modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.UserCourse", b =>
                 {
                     b.Property<int>("UC_Id")
@@ -599,6 +627,25 @@ namespace OnlineLearn.DataLayer.Migrations
                         .HasForeignKey("ParentId");
                 });
 
+            modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.CourseVote", b =>
+                {
+                    b.HasOne("OnlineLearn.DataLayer.Entities.Course.Course", "Course")
+                        .WithMany("CourseVotes")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("OnlineLearn.DataLayer.Entities.User.User", "User")
+                        .WithMany("CourseVotes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("OnlineLearn.DataLayer.Entities.Course.UserCourse", b =>
                 {
                     b.HasOne("OnlineLearn.DataLayer.Entities.Course.Course", "Course")
@@ -735,6 +782,8 @@ namespace OnlineLearn.DataLayer.Migrations
 
                     b.Navigation("CourseEpisodes");
 
+                    b.Navigation("CourseVotes");
+
                     b.Navigation("OrderDetails");
 
                     b.Navigation("UserCourses");
@@ -784,6 +833,8 @@ namespace OnlineLearn.DataLayer.Migrations
                     b.Navigation("CourseComments");
 
                     b.Navigation("Courses");
+
+                    b.Navigation("CourseVotes");
 
                     b.Navigation("Orders");
 
