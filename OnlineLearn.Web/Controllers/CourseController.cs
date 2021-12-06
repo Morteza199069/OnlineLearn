@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OnlineLearn.Core.Services.Interfaces;
 using OnlineLearn.DataLayer.Entities.Course;
+using SharpCompress.Archives;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,12 +34,68 @@ namespace OnlineLearn.Web.Controllers
         }
 
         [Route("ShowCourse/{id}")]
-        public IActionResult ShowCourse(int id)
+        public IActionResult ShowCourse(int id, int episode = 0)
         {
             var course = _courseService.GetCourseDetails(id);
             if (course == null)
             {
                 return NotFound();
+            }
+
+            if (episode != 0 && User.Identity.IsAuthenticated)
+            {
+                if (course.CourseEpisodes.All(c => c.EpisodeId != episode))
+                {
+                    return NotFound();
+                }
+                if (!course.CourseEpisodes.First(c => c.EpisodeId == episode).IsFree)
+                {
+                    if (!_orderService.IsUserInCourse(User.Identity.Name, id))
+                    {
+                        return NotFound();
+                    }
+                }
+
+                var ep = course.CourseEpisodes.First(c => c.EpisodeId == episode);
+                ViewBag.Episode = ep;
+                string filePath = "";
+                string checkFilePath = "";
+                if(ep.IsFree)
+                {
+                    filePath = "/OnlineCourseFiles/" + ep.EpisodeFileName.Replace(".rar", ".mp4");
+                    checkFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/FreeOnlineCourseFiles", ep.EpisodeFileName.Replace(".rar", ".mp4"));
+                }
+                else
+                {
+                    filePath = "/FreeOnlineCourseFiles/" + ep.EpisodeFileName.Replace(".rar", ".mp4");
+                    checkFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/BuyOnlineCourseFiles", ep.EpisodeFileName.Replace(".rar", ".mp4"));
+                }
+                if(!System.IO.File.Exists(checkFilePath))
+                {
+                    string targetPath = Directory.GetCurrentDirectory();
+                    if(ep.IsFree)
+                    {
+                        targetPath = Path.Combine(targetPath, "wwwroot/FreeOnlineCourseFiles");
+                    }
+                    else
+                    {
+                        targetPath = Path.Combine(targetPath, "wwwroot/BuyOnlineCourseFiles");
+                    }
+
+                    string rarPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/courseFiles", ep.EpisodeFileName);
+                    var archive = ArchiveFactory.Open(rarPath);
+
+                    var Enries = archive.Entries.OrderBy(x => x.Key.Length);
+                    foreach (var en in Enries)
+                    {
+                        if(Path.GetExtension(en.Key)==".mp4")
+                        {
+                            en.WriteTo(System.IO.File.Create(Path.Combine(targetPath, ep.EpisodeFileName.Replace(".rar", ".mp4"))));
+                        }
+                    }
+                }
+
+                ViewBag.filePath = filePath;
             }
             return View(course);
         }

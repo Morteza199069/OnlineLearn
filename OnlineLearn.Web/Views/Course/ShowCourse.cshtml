@@ -17,21 +17,21 @@
 
 @section MetaTag
 {
-    <meta name=googlebot content=index,follow>
-    <meta name=robots content=noodp,noydir>
-    <meta name=description content="شرح صفحه">
+<meta name=googlebot content=index,follow>
+<meta name=robots content=noodp,noydir>
+<meta name=description content="شرح صفحه">
 
-    <meta property=og:site_name value="خودآموزش تاپ لرن">
-    <meta property=og:title content="@Model.CourseTitle">
-    <meta property=og:url content="https://toplearn.com/ShowCourse/@Model.CourseTitle" />
-    <meta property=og:image content="/course/image/@Model.CourseImageName">
-    <meta property=og:image:url content="/course/image/@Model.CourseImageName" />
-    <meta property=og:image:width content="700">
+<meta property=og:site_name value="خودآموزش تاپ لرن">
+<meta property=og:title content="@Model.CourseTitle">
+<meta property=og:url content="https://toplearn.com/ShowCourse/@Model.CourseTitle" />
+<meta property=og:image content="/course/image/@Model.CourseImageName">
+<meta property=og:image:url content="/course/image/@Model.CourseImageName" />
+<meta property=og:image:width content="700">
 
-    <meta property=og:image:type content="image/jpg">
-    <meta property=og:description content="">
-    <meta property=og:price:currency content="IRR">
-    <meta property=og:locale content="ir_FA">
+<meta property=og:image:type content="image/jpg">
+<meta property=og:description content="">
+<meta property=og:price:currency content="IRR">
+<meta property=og:locale content="ir_FA">
 }
 
 
@@ -64,7 +64,6 @@
                     }
 
                     <div id="vote">
-
                     </div>
 
                     @if (!IsUserInCourse)
@@ -81,7 +80,7 @@
 
                         <h2>@episode.EpisodeTitle</h2>
                         <video controls style="width:100%">
-                            <source src="/course/demos/@Model.DemoFileName" />
+                            <source src="/course/demos/@Model.DemoFileName">
                         </video>
                     }
                     <ul>
@@ -130,11 +129,11 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <form asp-controller="Course" asp-action="CreateComment"
-                                  data-ajax="true"
-                                  data-ajax-method="post"
-                                  data-ajax-mode="replace"
-                                  data-ajax-update="#listComment"
-                                  data-ajax-success="Success">
+                              data-ajax="true"
+                              data-ajax-method="post"
+                              data-ajax-mode="replace"
+                              data-ajax-update="#listComment"
+                              data-ajax-success="Success">
                                 <input type="hidden" name="comment.CourseId" value="@Model.CourseId" />
                                 <div class="row">
                                     <div class="col-md-12 col-sm-12 col-xs-12">
@@ -158,7 +157,6 @@
 
 
                         <div class="comment-list" id="listComment">
-
                         </div>
                     </div>
                 </section>
@@ -244,28 +242,28 @@
 
 @section Scripts
     {
-    <script src="/js/jquery.unobtrusive-ajax.min.js"></script>
-    <script>
-        function Success() {
-            $("#comment_Comment").val("");
-        }
+<script src="/js/jquery.unobtrusive-ajax.min.js"></script>
+<script>
+    function Success() {
+        $("#comment_Comment").val("");
+    }
 
-        $(function() {
-            $("#listComment").load("/Course/ShowComment/" + @Model.CourseId);
-        });
+    $(function() {
+        $("#listComment").load("/Course/ShowComment/" + @Model.CourseId);
+    });
 
-        function pageComment(pageid) {
-            $("#listComment").load("/Course/ShowComment/" + @Model.CourseId+"?pageId="+pageid);
-        }
+    function pageComment(pageid) {
+        $("#listComment").load("/Course/ShowComment/" + @Model.CourseId+"?pageId="+pageid);
+    }
 
-        $(function () {
-            $("#vote").load("/Course/CourseVote/@Model.CourseId");
-        })
+    $(function () {
+        $("#vote").load("/Course/CourseVote/@Model.CourseId");
+    })
 
-        function vote(vote) {
-            $("#vote").fadeOut("slow");
-            $("#vote").load("/Course/AddVote/@(Model.CourseId)?vote=" + vote)
-            $("#vote").fadeIn("slow");
-        }
-    </script>
+    function vote(vote) {
+        $("#vote").fadeOut("slow");
+        $("#vote").load("/Course/AddVote/@(Model.CourseId)?vote=" + vote)
+        $("#vote").fadeIn("slow");
+    }
+</script>
 }
