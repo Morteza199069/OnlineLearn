@@ -71,6 +71,25 @@ namespace OnlineLearn.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path.Value.ToString().ToLower().StartsWith("/BuyOnlineCourseFiles"))
+                {
+                    var callingUrl = context.Request.Headers["Referer"].ToString();
+                    if (callingUrl != "" && (callingUrl.StartsWith("https://localhost:44300/") || callingUrl.StartsWith("http://localhost:44300/")))
+                    {
+                        await next.Invoke();
+                    }
+                    else
+                    {
+                        context.Response.Redirect("/Login");
+                    }
+                }
+                else
+                {
+                    await next.Invoke();
+                }
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
