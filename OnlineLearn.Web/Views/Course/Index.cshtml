@@ -1,5 +1,4 @@
-﻿@model Tuple<List<OnlineLearn.Core.DTOs.ShowCourseListItemViewModel>, int>
-@using OnlineLearn.DataLayer.Entities.Course
+﻿@using OnlineLearn.DataLayer.Entities.Course
 @{
     ViewData["Title"] = "دوره ها";
 }
@@ -113,10 +112,9 @@
 
                     <section class="terms-items">
                         <div class="row">
-                            @foreach (var item in Model.Item1)
-                            {
-                                <partial name="_CourseBox" model="@item" />
-                            }
+                            <cache expires-after=@TimeSpan.FromMinutes(5)>
+                                @await Component.InvokeAsync("LatestCourse");
+                            </cache>
                         </div>
 
 
